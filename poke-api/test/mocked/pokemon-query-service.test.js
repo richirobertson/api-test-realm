@@ -40,8 +40,8 @@ describe('type/move and regional Pokédex queries', () => {
       name: 'electric',
       region: 'kanto',
       results: [
-        { name: 'pikachu', entryNumber: 25, encounters: [] },
-        { name: 'raichu', entryNumber: 26, encounters: [] }
+        { name: 'pikachu', imageUrl: null, entryNumber: 25, encounters: [] },
+        { name: 'raichu', imageUrl: null, entryNumber: 26, encounters: [] }
       ]
     }));
   });
@@ -58,6 +58,6 @@ describe('type/move and regional Pokédex queries', () => {
     const result = await findPokemonByCriterionAndRegion(client, 'thunderbolt', 'kanto');
 
     expect(result.kind).toBe('move');
-    expect(result.results).toEqual([{ name: 'raichu', entryNumber: 26, learning: [{ method: 'machine', versionGroups: ['red-blue'] }] }]);
+    expect(result.results).toEqual([{ name: 'raichu', imageUrl: null, entryNumber: 26, learning: [{ method: 'machine', versionGroups: ['red-blue'] }] }]);
   });
 });

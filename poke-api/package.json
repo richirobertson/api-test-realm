@@ -4,6 +4,9 @@
   "private": true,
   "description": "A starter Node.js API with an automated Supertest suite.",
   "main": "src/server.js",
+  "bin": {
+    "poke": "src/cli.js"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",

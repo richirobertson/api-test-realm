@@ -75,6 +75,7 @@ async function buildPokemonProfile(client, nameOrId) {
       heightMetres: pokemon.height / 10,
       weightKilograms: pokemon.weight / 10,
       abilities: pokemon.abilities.map(({ ability, is_hidden }) => ({ name: ability.name, hidden: is_hidden })),
+      imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null,
       legendary: species.is_legendary,
       mythical: species.is_mythical
     },
@@ -92,7 +93,7 @@ async function buildPokemonRegionProfile(client, nameOrId, region) {
     area: location_area.name,
     methods: [...new Set(version_details.flatMap(({ encounter_details }) => encounter_details.map(({ method }) => method.name)))]
   }));
-  return { pokemon: pokemon.name, region, locations, levelUpMoves: levelUpMoves(pokemon.moves) };
+  return { pokemon: pokemon.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, region, locations, levelUpMoves: levelUpMoves(pokemon.moves) };
 }
 
 async function buildPokemonMoveProfile(client, nameOrId, moveName) {
@@ -104,7 +105,7 @@ async function buildPokemonMoveProfile(client, nameOrId, moveName) {
     ...(detail.level_learned_at ? { level: detail.level_learned_at } : {}),
     versionGroup: detail.version_group.name
   }));
-  return { pokemon: pokemon.name, move: moveName, learning };
+  return { pokemon: pokemon.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, move: moveName, learning };
 }
 
 module.exports = { buildPokemonProfile, buildPokemonRegionProfile, buildPokemonMoveProfile, levelUpMoves, summariseEvolution };

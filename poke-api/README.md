@@ -9,19 +9,20 @@ N.B this repo does not to monitor PokéAPI availability.
 ```sh
 cd poke-api
 npm install
+npm link
 npm test
 npm run test:live
 ```
 
-`npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
+`npm link` makes `poke` available as a short local command. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
 ## Terminal explorer
 
 Use the CLI with a resource name or a criterion plus a region:
 
 ```sh
-npm run poke -- {{pokemon}}
-npm run poke -- {{type-or-move}} {{region}}
+poke {{pokemon}}
+poke {{type-or-move}} {{region}}
 ```
 
 Every successful result and error is displayed as indented, syntax-coloured JSON. A direct lookup returns a curated profile rather than the full API payload: core facts, regional Pokédex coverage, evolution conditions, and level-up moves with version-group notes. Two terms resolve the first as a type or move, then return the matching Pokémon listed in the requested region's Pokédex.
@@ -30,20 +31,20 @@ For example:
 
 ```sh
 # Curated Pokémon profile: facts, regional coverage, evolution, and level-up moves
-npm run poke -- pikachu
+poke pikachu
 
 # Pokémon in a region: encounter areas/methods plus level-up move information
-npm run poke -- pikachu galar
+poke pikachu galar
 
 # Pokémon learning a move: methods, levels, and version groups
-npm run poke -- charizard flamethrower
+poke charizard flamethrower
 
 # Pokémon of a type in a region, with encounter areas, methods, and game versions
-npm run poke -- electric kanto
+poke electric kanto
 
 # Pokémon that learn a move in a region, with learning methods, levels, and version groups
-npm run poke -- flamethrower johto
-npm run poke -- sky attack kanto
+poke flamethrower johto
+poke sky attack kanto
 ```
 
 For multi-word moves, write the move naturally: the CLI treats the final word as the region and converts the preceding words into the PokéAPI move name.
