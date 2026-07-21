@@ -12,11 +12,12 @@
     "dev": "nodemon src/server.js",
     "poke": "node src/cli.js",
     "test": "npm run test:unit",
-    "test:unit": "jest --runInBand --verbose --testPathIgnorePatterns=test/live",
-    "test:mocked": "jest test/mocked --runInBand --verbose",
-    "test:live": "jest test/live --runInBand --verbose",
-    "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json",
-    "test:all": "jest --runInBand --verbose",
+    "test:celebrate": "node scripts/celebrate-success.js",
+    "test:unit": "jest --runInBand --verbose --testPathIgnorePatterns=test/live && npm run test:celebrate",
+    "test:mocked": "jest test/mocked --runInBand --verbose && npm run test:celebrate",
+    "test:live": "jest test/live --runInBand --verbose && npm run test:celebrate",
+    "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json && npm run test:celebrate",
+    "test:all": "jest --runInBand --verbose && npm run test:celebrate",
     "test:watch": "jest --watch --verbose --testPathIgnorePatterns=test/live"
   },
   "jest": {
