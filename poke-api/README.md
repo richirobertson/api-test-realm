@@ -15,6 +15,25 @@ npm run test:live
 
 `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
+## Terminal explorer
+
+Use the CLI with a resource name or a criterion plus a region:
+
+```sh
+npm run poke -- {{pokemon}}
+npm run poke -- {{type-or-move}} {{region}}
+```
+
+Every successful result and error is displayed as indented, syntax-coloured JSON. One term looks up a Pokémon directly. Two terms resolve the first as a type or move, then return the matching Pokémon listed in the requested region's Pokédex.
+
+For example:
+
+```sh
+npm run poke -- pikachu
+npm run poke -- electric kanto
+npm run poke -- flamethrower johto
+```
+
 ## Scope
 
 The live suite covers the kinds of behaviour a consumer needs confidence in:

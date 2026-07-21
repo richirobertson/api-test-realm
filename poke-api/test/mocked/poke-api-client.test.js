@@ -1,4 +1,4 @@
-const { createPokeApiClient } = require('../support/poke-api-client');
+const { createPokeApiClient } = require('../../src/poke-api-client');
 
 const clientOptions = {
   baseUrl: 'https://pokeapi.example/api/v2',
