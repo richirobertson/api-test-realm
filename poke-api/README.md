@@ -39,6 +39,16 @@ Use the commands according to the certainty you need:
 - `npm run test:live` — real PokéAPI checks; useful when validating the integration or investigating an external response.
 - `npm run test:all` — runs both levels together.
 
+### Proving the tests can fail
+
+Run the curated proof check when you want to demonstrate that a test is genuinely protecting a contract:
+
+```sh
+npm run test:proof
+```
+
+It temporarily introduces a known defect into the local `/health` response, runs the single health-contract test, then restores the source exactly. A final **PASS — expected failure observed** means the test detected the defect. This command is manual-only and is intentionally excluded from normal test commands and CI. See [`test/proof/README.md`](test/proof/README.md) for the precise behaviour.
+
 When any completed test command passes (`npm test`, `npm run test:unit`, `npm run test:mocked`, `npm run test:live`, or `npm run test:all`), the repository-owned GIF in `assets/test-success.gif` is rendered at the end through Chafa. This is a small success cue only: a failed test stops the command before the celebration script runs. Watch mode is intentionally excluded.
 
 ## Terminal explorer
@@ -94,6 +104,7 @@ The live suite covers the kinds of behaviour a consumer needs confidence in:
 | --- | --- | --- | --- |
 | Deterministic | `test/mocked/` | Local app checks plus mocked client URL, error, and retry behaviour | Required on every pull request |
 | Live integration | `test/live/` | Public-API contracts, journeys, and response-quality checks | Manual only; never a pull-request gate |
+| Curated test proof | `test/proof/` | Demonstrates a chosen contract test detecting a controlled defect | Manual only; never a pull-request gate |
 | Shared assets | `test/schemas/`, `test/support/` | Constrained schemas, configuration, matchers, test data, and reusable suites | Used by both levels |
 
 This split makes failures actionable: a pull-request failure points to repository behaviour, while a live-test failure may also reflect a dependency or network condition.
