@@ -18,15 +18,20 @@ describe('PokéAPI terminal CLI', () => {
         weight: 60,
         types: [{ type: { name: 'electric' } }],
         abilities: [{ ability: { name: 'static' }, is_hidden: false }],
-        stats: [{ stat: { name: 'speed' }, base_stat: 90 }]
+        stats: [{ stat: { name: 'speed' }, base_stat: 90 }],
+        species: { url: 'species' }, moves: []
       }))
     };
+
+    client.getByUrl = jest.fn((url) => Promise.resolve(jsonResponse(url === 'species'
+      ? { is_legendary: false, is_mythical: false, evolution_chain: { url: 'chain' }, pokedex_numbers: [] }
+      : { chain: { species: { name: 'pikachu' }, evolves_to: [] } })));
 
     const exitCode = await run(['pikachu'], { client, stdout, stderr: jest.fn() });
 
     expect(exitCode).toBe(0);
-    expect(stdout).toHaveBeenCalledWith(expect.stringContaining('"name": "pikachu"'));
-    expect(stdout).toHaveBeenCalledWith(expect.stringContaining('"electric"'));
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining('"regionalCoverage"'));
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining('"evolutionLine"'));
   });
 
   it('returns a friendly error when a direct Pokémon lookup is unavailable', async () => {
