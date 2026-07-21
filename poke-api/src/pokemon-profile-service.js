@@ -85,4 +85,26 @@ async function buildPokemonProfile(client, nameOrId) {
   };
 }
 
-module.exports = { buildPokemonProfile, levelUpMoves, summariseEvolution };
+async function buildPokemonRegionProfile(client, nameOrId, region) {
+  const pokemon = await readJson(await client.getPokemon(nameOrId), `Pokémon "${nameOrId}"`);
+  const encounters = await readJson(await client.getByUrl(pokemon.location_area_encounters), 'Encounter locations');
+  const locations = encounters.filter(({ location_area }) => location_area.name.startsWith(`${region}-`)).slice(0, 10).map(({ location_area, version_details }) => ({
+    area: location_area.name,
+    methods: [...new Set(version_details.flatMap(({ encounter_details }) => encounter_details.map(({ method }) => method.name)))]
+  }));
+  return { pokemon: pokemon.name, region, locations, levelUpMoves: levelUpMoves(pokemon.moves) };
+}
+
+async function buildPokemonMoveProfile(client, nameOrId, moveName) {
+  const pokemon = await readJson(await client.getPokemon(nameOrId), `Pokémon "${nameOrId}"`);
+  const move = pokemon.moves.find(({ move: candidate }) => candidate.name === moveName);
+  if (!move) throw new Error(`${pokemon.name} cannot learn "${moveName}".`);
+  const learning = move.version_group_details.map((detail) => ({
+    method: detail.move_learn_method.name,
+    ...(detail.level_learned_at ? { level: detail.level_learned_at } : {}),
+    versionGroup: detail.version_group.name
+  }));
+  return { pokemon: pokemon.name, move: moveName, learning };
+}
+
+module.exports = { buildPokemonProfile, buildPokemonRegionProfile, buildPokemonMoveProfile, levelUpMoves, summariseEvolution };
