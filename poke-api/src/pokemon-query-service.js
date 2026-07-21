@@ -68,13 +68,12 @@ async function addMoveLearning(client, result, moveName) {
     if (!grouped.has(key)) grouped.set(key, { method: detail.move_learn_method.name, level: detail.level_learned_at, versionGroups: [] });
     grouped.get(key).versionGroups.push(detail.version_group.name);
   }
-  const learning = [...grouped.values()].map(({ method, level, versionGroups }) => ({
-    method,
-    ...(level ? { level } : {}),
-    versionGroups: [...new Set(versionGroups)].sort().slice(0, 8),
-    additionalVersionGroups: Math.max(new Set(versionGroups).size - 8, 0) || undefined
-  }));
-  return { name: result.name, entryNumber: result.entryNumber, learning };
+  const learning = [...grouped.values()].map(({ method, level, versionGroups }) => {
+    const uniqueGroups = [...new Set(versionGroups)].sort();
+    const additionalVersionGroups = Math.max(uniqueGroups.length - 8, 0);
+    return { method, ...(level ? { level } : {}), versionGroups: uniqueGroups.slice(0, 8), ...(additionalVersionGroups ? { additionalVersionGroups } : {}) };
+  });
+  return { name: result.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, entryNumber: result.entryNumber, learning };
 }
 
 async function addRegionalEncounters(client, result, region) {
@@ -88,7 +87,7 @@ async function addRegionalEncounters(client, result, region) {
       methods: [...new Set(version_details.flatMap(({ encounter_details }) => encounter_details.map(({ method }) => method.name)))],
       versions: [...new Set(version_details.map(({ version }) => version.name))]
     }));
-  return { name: result.name, entryNumber: result.entryNumber, encounters: areas };
+  return { name: result.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, entryNumber: result.entryNumber, encounters: areas };
 }
 
 module.exports = { findPokemonByCriterionAndRegion, readJson };
