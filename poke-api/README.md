@@ -35,3 +35,9 @@ Set `POKEAPI_BASE_URL` to point the live suite at a compatible alternate environ
 - `test/support/` — configuration, the reusable API client, custom Jest matchers, test data, and shared suites.
 
 Copy `.env.example` to `.env` to configure `POKEAPI_BASE_URL`, `POKEAPI_TIMEOUT_MS`, and optional comma-separated `POKEAPI_TEST_TAGS`. `.env` is deliberately ignored by Git.
+
+## CI
+
+GitHub Actions runs `npm run test:mocked` for every pull request. These deterministic tests are the PR signal because they do not depend on public-network availability.
+
+Live PokéAPI checks are started manually when their availability is relevant to the work at hand. They write a JSON result file that is uploaded as a workflow artifact whether the checks pass or fail, keeping third-party availability issues visible without making them a pull-request gate.

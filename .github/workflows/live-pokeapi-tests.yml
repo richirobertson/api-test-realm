@@ -1,0 +1,46 @@
+name: Live PokéAPI tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      pokeapi_base_url:
+        description: Compatible PokéAPI base URL to test
+        required: false
+        default: https://pokeapi.co/api/v2
+
+permissions:
+  contents: read
+
+jobs:
+  live-tests:
+    name: Live public-API checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: poke-api
+    env:
+      POKEAPI_BASE_URL: ${{ inputs.pokeapi_base_url || 'https://pokeapi.co/api/v2' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: poke-api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run live checks and write report
+        run: npm run test:live:report
+
+      - name: Upload live test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-pokeapi-test-report
+          path: poke-api/reports/live-test-results.json
+          if-no-files-found: warn

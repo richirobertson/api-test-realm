@@ -1,0 +1,31 @@
+name: Mocked tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  mocked-tests:
+    name: Deterministic mocked tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: poke-api
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: poke-api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run deterministic mocked tests
+        run: npm run test:mocked
