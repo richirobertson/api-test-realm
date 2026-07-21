@@ -1,22 +1,9 @@
 # API Test Realm
 
-A small Express API starter with Jest and Supertest.
+A collection of API-testing examples, organised by API and testing concept.
 
-## Getting started
+## Available examples
 
-```sh
-npm install
-npm test
-npm run test:live
-npm start
-```
+- [`poke-api/`](./poke-api) — live and local tests demonstrating smoke, JSON-contract, and identity-equivalence testing against PokéAPI.
 
-The example health endpoint is available at `GET /health`.
-
-## Test suites
-
-- `npm test` runs deterministic local unit tests.
-- `npm run test:live` calls the public PokéAPI, validates a constrained contract for `GET /pokemon/pikachu`, and confirms Pikachu resolves consistently by name and ID.
-- `npm run test:all` runs both suites.
-
-Set `POKEAPI_BASE_URL` to point the live suite at a compatible alternate environment.
+Each example is self-contained. Enter its folder before installing dependencies or running its commands.
