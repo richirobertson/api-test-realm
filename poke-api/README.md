@@ -32,6 +32,12 @@ For example:
 # Curated Pokémon profile: facts, regional coverage, evolution, and level-up moves
 npm run poke -- pikachu
 
+# Pokémon in a region: encounter areas/methods plus level-up move information
+npm run poke -- pikachu galar
+
+# Pokémon learning a move: methods, levels, and version groups
+npm run poke -- charizard flamethrower
+
 # Pokémon of a type in a region, with encounter areas, methods, and game versions
 npm run poke -- electric kanto
 
