@@ -4,17 +4,40 @@ An API-testing example using Jest, Supertest, Ajv, and the public [PokéAPI](htt
 
 N.B this repo does not to monitor PokéAPI availability.
 
+## What this repository demonstrates
+
+This is deliberately both a testing showcase and a small working CLI.
+
+- **API testing practice:** deterministic mocked tests, live contract and journey checks, reusable schemas, data-driven coverage, negative paths, pagination, response quality, and CI that separates repository regressions from public-API availability.
+- **Consumer-focused functionality:** the `poke` command turns PokéAPI resources into concise terminal output, supports direct lookups and cross-resource queries, and can render ANSI/Unicode artwork.
+
+The combination is intentional: the CLI provides a realistic consumer of the API, while the test suite shows how to verify that kind of integration responsibly.
+
 ## Quick start
 
 ```sh
 cd poke-api
 npm install
 npm link
+
+# Optional: render Pokémon artwork as ANSI/Unicode thumbnails in the terminal
+brew install chafa
+
 npm test
 npm run test:live
 ```
 
-`npm link` makes `poke` available as a short local command. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
+`npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
+
+## Reading test output
+
+All test commands run Jest in verbose mode. Each line names the behaviour being checked and is marked with a green pass indicator when successful. A failure is marked clearly, followed by the failed expectation and an error diff or message that explains what did not match.
+
+Use the commands according to the certainty you need:
+
+- `npm test` — deterministic mocked and local tests; the fastest feedback for changes to this repository.
+- `npm run test:live` — real PokéAPI checks; useful when validating the integration or investigating an external response.
+- `npm run test:all` — runs both levels together.
 
 ## Terminal explorer
 
