@@ -39,7 +39,7 @@ Use the commands according to the certainty you need:
 - `npm run test:live` — real PokéAPI checks; useful when validating the integration or investigating an external response.
 - `npm run test:all` — runs both levels together.
 
-When any completed test command passes (`npm test`, `npm run test:unit`, `npm run test:mocked`, `npm run test:live`, or `npm run test:all`), the repository-owned Snorlax GIF in `assets/test-success.gif` is rendered at the end through Chafa. This is a small success cue only: a failed test stops the command before the celebration script runs. Watch mode is intentionally excluded.
+When any completed test command passes (`npm test`, `npm run test:unit`, `npm run test:mocked`, `npm run test:live`, or `npm run test:all`), the repository-owned GIF in `assets/test-success.gif` is rendered at the end through Chafa. This is a small success cue only: a failed test stops the command before the celebration script runs. Watch mode is intentionally excluded.
 
 ## Terminal explorer
 
