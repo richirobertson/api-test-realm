@@ -18,6 +18,7 @@ The example health endpoint is available at `GET /health`.
 
 - `npm test` runs deterministic local unit tests.
 - `npm run test:live` calls the public PokéAPI, validates a constrained contract for `GET /pokemon/pikachu`, and confirms Pikachu resolves consistently by name and ID.
+- The live suite also applies reusable pagination checks to `GET /pokemon?limit=10&offset=20`, including distinct resources and fully navigable next/previous links.
 - `npm run test:all` runs both suites.
 
 Set `POKEAPI_BASE_URL` to point the live suite at a compatible alternate environment.
