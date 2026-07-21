@@ -17,6 +17,7 @@ The combination is intentional: the CLI provides a realistic consumer of the API
 
 ```sh
 cd poke-api
+# Requires Node.js 24 LTS (use `nvm use` if you have nvm installed)
 npm install
 npm link
 
@@ -27,7 +28,7 @@ npm test
 npm run test:live
 ```
 
-`npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
+This project requires Node.js 24 LTS; `.nvmrc` lets Node version managers select it with `nvm use`. `npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
 ## Reading test output
 
