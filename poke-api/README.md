@@ -24,15 +24,23 @@ npm run poke -- {{pokemon}}
 npm run poke -- {{type-or-move}} {{region}}
 ```
 
-Every successful result and error is displayed as indented, syntax-coloured JSON. One term looks up a Pokémon directly. Two terms resolve the first as a type or move, then return the matching Pokémon listed in the requested region's Pokédex.
+Every successful result and error is displayed as indented, syntax-coloured JSON. A direct lookup returns a curated profile rather than the full API payload: core facts, regional Pokédex coverage, evolution conditions, and level-up moves with version-group notes. Two terms resolve the first as a type or move, then return the matching Pokémon listed in the requested region's Pokédex.
 
 For example:
 
 ```sh
+# Curated Pokémon profile: facts, regional coverage, evolution, and level-up moves
 npm run poke -- pikachu
+
+# Pokémon of a type in a region, with encounter areas, methods, and game versions
 npm run poke -- electric kanto
+
+# Pokémon that learn a move in a region, with learning methods, levels, and version groups
 npm run poke -- flamethrower johto
+npm run poke -- sky attack kanto
 ```
+
+For multi-word moves, write the move naturally: the CLI treats the final word as the region and converts the preceding words into the PokéAPI move name.
 
 ## Scope
 
