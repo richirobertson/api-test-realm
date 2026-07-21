@@ -26,3 +26,12 @@ The example health endpoint is available at `GET /health`.
 - `npm run test:all` runs both suites.
 
 Set `POKEAPI_BASE_URL` to point the live suite at a compatible alternate environment.
+
+## Architecture
+
+- `test/live/` — real PokéAPI smoke, contract, integration, boundary, and quality checks.
+- `test/mocked/` — deterministic local and mocked-HTTP tests, including client retry and error behaviour.
+- `test/schemas/` — reusable constrained JSON Schemas.
+- `test/support/` — configuration, the reusable API client, custom Jest matchers, test data, and shared suites.
+
+Copy `.env.example` to `.env` to configure `POKEAPI_BASE_URL`, `POKEAPI_TIMEOUT_MS`, and optional comma-separated `POKEAPI_TEST_TAGS`. `.env` is deliberately ignored by Git.

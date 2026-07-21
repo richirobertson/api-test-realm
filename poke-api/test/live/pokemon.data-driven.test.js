@@ -1,18 +1,10 @@
 // Ajv applies the same constrained consumer contract to every representative Pokémon.
 const Ajv = require('ajv');
-const pokemonSchema = require('./pokemon.schema');
+const pokemonSchema = require('../schemas/pokemon.schema');
+const { baseUrl } = require('../support/config');
+const { pokemonCases } = require('../support/pokemon-test-data');
 
-const baseUrl = process.env.POKEAPI_BASE_URL || 'https://pokeapi.co/api/v2';
 const validatePokemon = new Ajv({ allErrors: true, strict: false }).compile(pokemonSchema);
-
-// This deliberately varied sample represents common API-consumer scenarios without testing every resource.
-const pokemonCases = [
-  { description: 'an iconic standard Pokémon', name: 'pikachu', id: 25 },
-  { description: 'a dual-type starter Pokémon', name: 'bulbasaur', id: 1 },
-  { description: 'a branching-evolution Pokémon', name: 'eevee', id: 133 },
-  { description: 'a legendary Pokémon', name: 'mewtwo', id: 150 },
-  { description: 'a Pokémon with forms', name: 'deoxys-normal', id: 386 }
-];
 
 describe('PokéAPI data-driven Pokémon contracts', () => {
   test.each(pokemonCases)('returns shared invariants for $description: $name', async ({ name, id }) => {

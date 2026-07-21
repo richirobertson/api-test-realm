@@ -1,5 +1,4 @@
-// The base URL is configurable so the same quality checks can run against a compatible environment.
-const baseUrl = process.env.POKEAPI_BASE_URL || 'https://pokeapi.co/api/v2';
+const { baseUrl } = require('../support/config');
 const apiOrigin = new URL(baseUrl).origin;
 const maxResponseTimeMs = 8_000;
 
@@ -30,6 +29,8 @@ describe('PokéAPI response quality: GET /pokemon/pikachu', () => {
     // The threshold is deliberately lenient for a public API; record the actual timing for visibility.
     console.info(`[response-quality] GET /pokemon/pikachu completed in ${elapsedMs} ms`);
     expect(elapsedMs).toBeLessThan(maxResponseTimeMs);
+    // The shared matcher keeps status and JSON media-type expectations consistent across suites.
+    expect(response).toBeSuccessfulJsonResponse();
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toMatch(/^application\/json(?:;|$)/i);
 

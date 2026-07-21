@@ -1,5 +1,4 @@
-// An alternate compatible environment can be selected without changing the test cases.
-const baseUrl = process.env.POKEAPI_BASE_URL || 'https://pokeapi.co/api/v2';
+const { baseUrl } = require('../support/config');
 
 // Error payload text is intentionally treated as opaque: consumers should rely on status and media type.
 async function expectTextError(url, expectedStatus) {

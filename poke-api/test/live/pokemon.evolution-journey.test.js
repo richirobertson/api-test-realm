@@ -1,5 +1,4 @@
-// The public base URL can be replaced with any compatible environment when required.
-const baseUrl = process.env.POKEAPI_BASE_URL || 'https://pokeapi.co/api/v2';
+const { baseUrl } = require('../support/config');
 
 // Follow a PokéAPI link and apply the minimum transport checks common to this journey.
 async function fetchJson(url) {

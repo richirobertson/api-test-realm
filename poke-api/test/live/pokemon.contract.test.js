@@ -1,9 +1,8 @@
 // Ajv validates JSON payloads against the schema kept alongside this test suite.
 const Ajv = require('ajv');
-const pokemonSchema = require('./pokemon.schema');
+const pokemonSchema = require('../schemas/pokemon.schema');
+const { baseUrl } = require('../support/config');
 
-// An environment variable makes the suite reusable against a compatible alternate environment.
-const baseUrl = process.env.POKEAPI_BASE_URL || 'https://pokeapi.co/api/v2';
 // Report every schema discrepancy in one run, making a failed contract easier to diagnose.
 const validatePokemon = new Ajv({ allErrors: true, strict: false }).compile(pokemonSchema);
 
