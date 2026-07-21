@@ -27,6 +27,8 @@ poke {{type-or-move}} {{region}}
 
 Every successful result and error is displayed as indented, syntax-coloured JSON. A direct lookup returns a curated profile rather than the full API payload: core facts, regional Pokédex coverage, evolution conditions, and level-up moves with version-group notes. Two terms resolve the first as a type or move, then return the matching Pokémon listed in the requested region's Pokédex.
 
+Install [Chafa](https://hpjansson.org/chafa/) with `brew install chafa` to render ANSI/Unicode artwork thumbnails by default. Thumbnails appear above the JSON for direct lookups and for up to ten list results; without Chafa, the JSON `imageUrl` remains available.
+
 For example:
 
 ```sh
