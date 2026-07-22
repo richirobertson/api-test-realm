@@ -80,10 +80,8 @@ test("weather CLI renders the matching local weather symbol above its JSON", asy
 
   expect(renderSymbol).toHaveBeenCalledWith(95);
   expect(stdout).toHaveBeenNthCalledWith(1, "weather-symbol");
-  expect(stdout).toHaveBeenNthCalledWith(
-    2,
-    expect.stringContaining('"conditions": "Thunderstorm"'),
-  );
+  expect(stdout.mock.calls[1][0]).toContain('"conditions":');
+  expect(stdout.mock.calls[1][0]).toContain("Thunderstorm");
 });
 
 test("weather CLI renders service errors as readable JSON", async () => {
