@@ -32,6 +32,17 @@ npm run test:live
 
 This project requires Node.js 24 LTS; `.nvmrc` lets Node version managers select it with `nvm use`. `npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
+### Docker
+
+The repository includes a small Docker image for a repeatable, dependency-isolated mocked-test run. It has no supporting services and does not run the live PokéAPI suite.
+
+```sh
+docker build -t api-test-realm .
+docker run --rm api-test-realm
+```
+
+The image uses Node 24, installs the lockfile exactly with `npm ci`, and runs `npm run test:mocked` by default.
+
 ## Reading test output
 
 All test commands run Jest in verbose mode. Each line names the behaviour being checked and is marked with a green pass indicator when successful. A failure is marked clearly, followed by the failed expectation and an error diff or message that explains what did not match.
