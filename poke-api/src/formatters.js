@@ -1,4 +1,4 @@
-const pc = require('picocolors');
+const pc = require("picocolors");
 
 // Apply lightweight JSON syntax highlighting without changing the underlying JSON representation.
 function colorizeJson(json) {
@@ -6,10 +6,10 @@ function colorizeJson(json) {
     /("(?:\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,
     (match, stringValue, keySuffix, literal) => {
       if (stringValue) return keySuffix ? pc.cyan(match) : pc.green(match);
-      if (literal === 'true' || literal === 'false') return pc.magenta(match);
-      if (literal === 'null') return pc.dim(match);
+      if (literal === "true" || literal === "false") return pc.magenta(match);
+      if (literal === "null") return pc.dim(match);
       return pc.yellow(match);
-    }
+    },
   );
 }
 

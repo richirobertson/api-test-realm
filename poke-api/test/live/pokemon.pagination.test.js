@@ -1,10 +1,12 @@
 // Reuse the pagination behaviour suite for the named Pokémon collection endpoint.
-const { registerNamedResourcePaginationSuite } = require('../support/named-resource-pagination-suite');
-const { baseUrl } = require('../support/config');
+const {
+  registerNamedResourcePaginationSuite,
+} = require("../support/named-resource-pagination-suite");
+const { baseUrl } = require("../support/config");
 
 registerNamedResourcePaginationSuite({
   baseUrl,
-  resourcePath: 'pokemon',
+  resourcePath: "pokemon",
   limit: 10,
-  offset: 20
+  offset: 20,
 });

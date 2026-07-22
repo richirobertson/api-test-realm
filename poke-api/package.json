@@ -11,6 +11,10 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "poke": "node src/cli.js",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run test:unit",
     "test:celebrate": "node scripts/celebrate-success.js",
     "test:unit": "jest --runInBand --verbose --testPathIgnorePatterns=test/live && npm run test:celebrate",
@@ -34,10 +38,14 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "ajv": "^8.20.0",
     "dotenv": "^17.4.2",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
     "supertest": "^7.2.2"
   }
 }

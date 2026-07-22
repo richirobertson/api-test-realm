@@ -101,12 +101,12 @@ The live suite covers the kinds of behaviour a consumer needs confidence in:
 
 ## Test pyramid and certainty levels
 
-| Level | Location | Purpose | CI role |
-| --- | --- | --- | --- |
-| Deterministic | `test/mocked/` | Local app checks plus mocked client URL, error, and retry behaviour | Required on every pull request |
-| Live integration | `test/live/` | Public-API contracts, journeys, and response-quality checks | Manual only; never a pull-request gate |
-| Curated test proof | `test/proof/` | Demonstrates a chosen contract test detecting a controlled defect | Manual only; never a pull-request gate |
-| Shared assets | `test/schemas/`, `test/support/` | Constrained schemas, configuration, matchers, test data, and reusable suites | Used by both levels |
+| Level              | Location                         | Purpose                                                                      | CI role                                |
+| ------------------ | -------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------- |
+| Deterministic      | `test/mocked/`                   | Local app checks plus mocked client URL, error, and retry behaviour          | Required on every pull request         |
+| Live integration   | `test/live/`                     | Public-API contracts, journeys, and response-quality checks                  | Manual only; never a pull-request gate |
+| Curated test proof | `test/proof/`                    | Demonstrates a chosen contract test detecting a controlled defect            | Manual only; never a pull-request gate |
+| Shared assets      | `test/schemas/`, `test/support/` | Constrained schemas, configuration, matchers, test data, and reusable suites | Used by both levels                    |
 
 This split makes failures actionable: a pull-request failure points to repository behaviour, while a live-test failure may also reflect a dependency or network condition.
 

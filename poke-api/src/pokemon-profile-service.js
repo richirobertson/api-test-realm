@@ -1,14 +1,16 @@
-const { readJson } = require('./pokemon-query-service');
+const { readJson } = require("./pokemon-query-service");
 
 function evolutionCondition(detail) {
-  return Object.fromEntries(Object.entries({
-    trigger: detail.trigger?.name,
-    minLevel: detail.min_level || undefined,
-    item: detail.item?.name,
-    heldItem: detail.held_item?.name,
-    timeOfDay: detail.time_of_day || undefined,
-    minHappiness: detail.min_happiness || undefined
-  }).filter(([, value]) => value !== undefined && value !== null));
+  return Object.fromEntries(
+    Object.entries({
+      trigger: detail.trigger?.name,
+      minLevel: detail.min_level || undefined,
+      item: detail.item?.name,
+      heldItem: detail.held_item?.name,
+      timeOfDay: detail.time_of_day || undefined,
+      minHappiness: detail.min_happiness || undefined,
+    }).filter(([, value]) => value !== undefined && value !== null),
+  );
 }
 
 function summariseEvolution(node) {
@@ -16,17 +18,24 @@ function summariseEvolution(node) {
     species: node.species.name,
     evolvesTo: node.evolves_to.map((child) => ({
       conditions: child.evolution_details.map(evolutionCondition),
-      ...summariseEvolution(child)
-    }))
+      ...summariseEvolution(child),
+    })),
   };
 }
 
 function levelUpMoves(moves, maximum = 20) {
   const grouped = new Map();
   for (const { move, version_group_details: details } of moves) {
-    for (const detail of details.filter(({ move_learn_method }) => move_learn_method.name === 'level-up')) {
+    for (const detail of details.filter(
+      ({ move_learn_method }) => move_learn_method.name === "level-up",
+    )) {
       const key = `${move.name}:${detail.level_learned_at}`;
-      if (!grouped.has(key)) grouped.set(key, { move: move.name, level: detail.level_learned_at, versionGroups: [] });
+      if (!grouped.has(key))
+        grouped.set(key, {
+          move: move.name,
+          level: detail.level_learned_at,
+          versionGroups: [],
+        });
       grouped.get(key).versionGroups.push(detail.version_group.name);
     }
   }
@@ -36,36 +45,66 @@ function levelUpMoves(moves, maximum = 20) {
       return {
         ...entry,
         versionGroups: versionGroups.slice(0, 8),
-        additionalVersionGroups: Math.max(versionGroups.length - 8, 0) || undefined
+        additionalVersionGroups:
+          Math.max(versionGroups.length - 8, 0) || undefined,
       };
     })
-    .sort((left, right) => left.level - right.level || left.move.localeCompare(right.move));
+    .sort(
+      (left, right) =>
+        left.level - right.level || left.move.localeCompare(right.move),
+    );
 
   return {
-    note: 'Level 0 means a starting move. Version groups show where the move and level differ between games.',
+    note: "Level 0 means a starting move. Version groups show where the move and level differ between games.",
     total: entries.length,
     shown: entries.slice(0, maximum),
-    truncated: entries.length > maximum
+    truncated: entries.length > maximum,
   };
 }
 
 async function buildPokemonProfile(client, nameOrId) {
-  const pokemon = await readJson(await client.getPokemon(nameOrId), `Pokémon "${nameOrId}"`);
-  const species = await readJson(await client.getByUrl(pokemon.species.url), 'Pokémon species');
+  const pokemon = await readJson(
+    await client.getPokemon(nameOrId),
+    `Pokémon "${nameOrId}"`,
+  );
+  const species = await readJson(
+    await client.getByUrl(pokemon.species.url),
+    "Pokémon species",
+  );
   const [evolutionChain, pokedexes] = await Promise.all([
-    readJson(await client.getByUrl(species.evolution_chain.url), 'Evolution chain'),
-    Promise.all(species.pokedex_numbers.map(async ({ entry_number, pokedex }) => {
-      const dex = await readJson(await client.getByUrl(pokedex.url), 'Regional Pokédex');
-      return { region: dex.region?.name || null, pokedex: pokedex.name, entryNumber: entry_number };
-    }))
+    readJson(
+      await client.getByUrl(species.evolution_chain.url),
+      "Evolution chain",
+    ),
+    Promise.all(
+      species.pokedex_numbers.map(async ({ entry_number, pokedex }) => {
+        const dex = await readJson(
+          await client.getByUrl(pokedex.url),
+          "Regional Pokédex",
+        );
+        return {
+          region: dex.region?.name || null,
+          pokedex: pokedex.name,
+          entryNumber: entry_number,
+        };
+      }),
+    ),
   ]);
 
-  const regionalCoverage = [...pokedexes.reduce((regions, entry) => {
-    if (!entry.region) return regions;
-    if (!regions.has(entry.region)) regions.set(entry.region, { region: entry.region, pokedexes: [] });
-    regions.get(entry.region).pokedexes.push({ name: entry.pokedex, entryNumber: entry.entryNumber });
-    return regions;
-  }, new Map()).values()];
+  const regionalCoverage = [
+    ...pokedexes
+      .reduce((regions, entry) => {
+        if (!entry.region) return regions;
+        if (!regions.has(entry.region))
+          regions.set(entry.region, { region: entry.region, pokedexes: [] });
+        regions.get(entry.region).pokedexes.push({
+          name: entry.pokedex,
+          entryNumber: entry.entryNumber,
+        });
+        return regions;
+      }, new Map())
+      .values(),
+  ];
 
   return {
     pokemon: {
@@ -74,38 +113,88 @@ async function buildPokemonProfile(client, nameOrId) {
       types: pokemon.types.map(({ type }) => type.name),
       heightMetres: pokemon.height / 10,
       weightKilograms: pokemon.weight / 10,
-      abilities: pokemon.abilities.map(({ ability, is_hidden }) => ({ name: ability.name, hidden: is_hidden })),
-      imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null,
+      abilities: pokemon.abilities.map(({ ability, is_hidden }) => ({
+        name: ability.name,
+        hidden: is_hidden,
+      })),
+      imageUrl:
+        pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+        pokemon.sprites?.front_default ||
+        null,
       legendary: species.is_legendary,
-      mythical: species.is_mythical
+      mythical: species.is_mythical,
     },
     regionalCoverage,
-    regionalPokedexNote: 'This is regional Pokédex coverage. Wild encounter locations can vary by game version.',
+    regionalPokedexNote:
+      "This is regional Pokédex coverage. Wild encounter locations can vary by game version.",
     evolutionLine: summariseEvolution(evolutionChain.chain),
-    levelUpMoves: levelUpMoves(pokemon.moves)
+    levelUpMoves: levelUpMoves(pokemon.moves),
   };
 }
 
 async function buildPokemonRegionProfile(client, nameOrId, region) {
-  const pokemon = await readJson(await client.getPokemon(nameOrId), `Pokémon "${nameOrId}"`);
-  const encounters = await readJson(await client.getByUrl(pokemon.location_area_encounters), 'Encounter locations');
-  const locations = encounters.filter(({ location_area }) => location_area.name.startsWith(`${region}-`)).slice(0, 10).map(({ location_area, version_details }) => ({
-    area: location_area.name,
-    methods: [...new Set(version_details.flatMap(({ encounter_details }) => encounter_details.map(({ method }) => method.name)))]
-  }));
-  return { pokemon: pokemon.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, region, locations, levelUpMoves: levelUpMoves(pokemon.moves) };
+  const pokemon = await readJson(
+    await client.getPokemon(nameOrId),
+    `Pokémon "${nameOrId}"`,
+  );
+  const encounters = await readJson(
+    await client.getByUrl(pokemon.location_area_encounters),
+    "Encounter locations",
+  );
+  const locations = encounters
+    .filter(({ location_area }) => location_area.name.startsWith(`${region}-`))
+    .slice(0, 10)
+    .map(({ location_area, version_details }) => ({
+      area: location_area.name,
+      methods: [
+        ...new Set(
+          version_details.flatMap(({ encounter_details }) =>
+            encounter_details.map(({ method }) => method.name),
+          ),
+        ),
+      ],
+    }));
+  return {
+    pokemon: pokemon.name,
+    imageUrl:
+      pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+      pokemon.sprites?.front_default ||
+      null,
+    region,
+    locations,
+    levelUpMoves: levelUpMoves(pokemon.moves),
+  };
 }
 
 async function buildPokemonMoveProfile(client, nameOrId, moveName) {
-  const pokemon = await readJson(await client.getPokemon(nameOrId), `Pokémon "${nameOrId}"`);
-  const move = pokemon.moves.find(({ move: candidate }) => candidate.name === moveName);
+  const pokemon = await readJson(
+    await client.getPokemon(nameOrId),
+    `Pokémon "${nameOrId}"`,
+  );
+  const move = pokemon.moves.find(
+    ({ move: candidate }) => candidate.name === moveName,
+  );
   if (!move) throw new Error(`${pokemon.name} cannot learn "${moveName}".`);
   const learning = move.version_group_details.map((detail) => ({
     method: detail.move_learn_method.name,
     ...(detail.level_learned_at ? { level: detail.level_learned_at } : {}),
-    versionGroup: detail.version_group.name
+    versionGroup: detail.version_group.name,
   }));
-  return { pokemon: pokemon.name, imageUrl: pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default || null, move: moveName, learning };
+  return {
+    pokemon: pokemon.name,
+    imageUrl:
+      pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+      pokemon.sprites?.front_default ||
+      null,
+    move: moveName,
+    learning,
+  };
 }
 
-module.exports = { buildPokemonProfile, buildPokemonRegionProfile, buildPokemonMoveProfile, levelUpMoves, summariseEvolution };
+module.exports = {
+  buildPokemonProfile,
+  buildPokemonRegionProfile,
+  buildPokemonMoveProfile,
+  levelUpMoves,
+  summariseEvolution,
+};

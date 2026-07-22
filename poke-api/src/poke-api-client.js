@@ -1,6 +1,11 @@
 // A shared PokéAPI client keeps URL construction, timeouts, and transient-network retries consistent.
-function createPokeApiClient({ baseUrl, fetchImplementation = fetch, timeoutMs = 10_000, retries = 1 }) {
-  const normalisedBaseUrl = `${baseUrl.replace(/\/$/, '')}/`;
+function createPokeApiClient({
+  baseUrl,
+  fetchImplementation = fetch,
+  timeoutMs = 10_000,
+  retries = 1,
+}) {
+  const normalisedBaseUrl = `${baseUrl.replace(/\/$/, "")}/`;
 
   async function getUrl(url) {
     let lastError;
@@ -24,16 +29,21 @@ function createPokeApiClient({ baseUrl, fetchImplementation = fetch, timeoutMs =
   }
 
   function getResource(resource, nameOrId) {
-    return getUrl(new URL(`${resource}/${encodeURIComponent(nameOrId)}`, normalisedBaseUrl).toString());
+    return getUrl(
+      new URL(
+        `${resource}/${encodeURIComponent(nameOrId)}`,
+        normalisedBaseUrl,
+      ).toString(),
+    );
   }
 
   return {
     getByUrl: getUrl,
-    getPokemon: (nameOrId) => getResource('pokemon', nameOrId),
-    getType: (nameOrId) => getResource('type', nameOrId),
-    getMove: (nameOrId) => getResource('move', nameOrId),
-    getRegion: (nameOrId) => getResource('region', nameOrId),
-    getPokedex: (nameOrId) => getResource('pokedex', nameOrId)
+    getPokemon: (nameOrId) => getResource("pokemon", nameOrId),
+    getType: (nameOrId) => getResource("type", nameOrId),
+    getMove: (nameOrId) => getResource("move", nameOrId),
+    getRegion: (nameOrId) => getResource("region", nameOrId),
+    getPokedex: (nameOrId) => getResource("pokedex", nameOrId),
   };
 }
 
