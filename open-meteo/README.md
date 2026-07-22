@@ -2,7 +2,7 @@
 
 ## Status
 
-This section contains the first, deterministic increment of an Open-Meteo API-testing example. It intentionally establishes the consumer contract and its test boundaries before adding live integration checks.
+This section contains a deterministic Open-Meteo consumer and an opt-in live integration suite. It establishes the consumer contract before validating the real provider, so routine development feedback stays repeatable and external availability does not block it.
 
 The completed example will sit alongside `poke-api/` as a self-contained Node.js project. It will use the public [Open-Meteo APIs](https://open-meteo.com/en/docs) to demonstrate API testing for parameter-driven, time-series data.
 
@@ -28,6 +28,12 @@ weather London
 npm test
 ```
 
+Run the real-provider checks only when deliberate integration validation is useful:
+
+```sh
+npm run test:live
+```
+
 ## Contract boundaries
 
 The implemented vertical slice makes these behaviours explicit:
@@ -48,7 +54,7 @@ The deterministic mocked tests cover:
 - Curated response shape and essential field types.
 - Empty results, invalid input, upstream HTTP errors, and transient network failures.
 
-Live Open-Meteo checks are deliberately a later phase. They will validate the real provider's response quality and data relationships, but will remain opt-in so an external outage cannot block repository changes.
+The opt-in live suite validates a known London geocoding result, forecast response media type and essential fields, geographic and timezone consistency, aligned and ordered daily time-series data, and rejection of impossible coordinates. It deliberately avoids asserting weather values: those are expected to change. An Open-Meteo outage or network failure can therefore affect only the manual live command, never the normal mocked-test gate.
 
 ## Planned growth
 
