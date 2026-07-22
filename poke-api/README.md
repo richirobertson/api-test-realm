@@ -37,6 +37,9 @@ All test commands run Jest in verbose mode. Each line names the behaviour being 
 Use the commands according to the certainty you need:
 
 - `npm test` — deterministic mocked and local tests; the fastest feedback for changes to this repository.
+- `npm run lint` — checks JavaScript with ESLint.
+- `npm run format:check` — verifies Prettier formatting without changing files.
+- `npm run test:mocked:report` — runs mocked tests and writes Jest JSON results plus LCOV coverage to `reports/` and `coverage/`.
 - `npm run test:live` — real PokéAPI checks; useful when validating the integration or investigating an external response.
 - `npm run test:all` — runs both levels together.
 
@@ -135,4 +138,11 @@ Copy `.env.example` to `.env` to configure `POKEAPI_BASE_URL`, `POKEAPI_TIMEOUT_
 
 ## CI
 
-GitHub Actions runs `npm run test:mocked` for every pull request. Live checks are started manually only when public-API availability is relevant; their JSON report is uploaded as a workflow artifact whether the run passes or fails.
+Pull requests run the deterministic mocked-test workflow. It executes `npm run test:mocked:report` and uploads the following evidence with `if: always()`, so it remains available after failed test runs:
+
+- `mocked-test-report` — Jest JSON test results.
+- `mocked-test-coverage` — LCOV coverage and JSON coverage summary.
+
+Live checks are started manually only when public-API availability is relevant. Their `live-pokeapi-test-report` JSON artifact is also uploaded whether the run passes or fails.
+
+Local quality gates are available through `npm run lint` and `npm run format:check`. GitHub CodeQL default setup additionally scans the repository's JavaScript/TypeScript code on pull requests, relevant pushes, and its scheduled run.
