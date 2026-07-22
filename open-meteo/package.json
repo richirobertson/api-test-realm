@@ -1,0 +1,33 @@
+{
+  "name": "open-meteo-test-realm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An Open-Meteo API-testing example with a small weather CLI.",
+  "bin": {
+    "weather": "src/cli.js"
+  },
+  "scripts": {
+    "weather": "node src/cli.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest test/mocked --runInBand --verbose",
+    "test:mocked": "jest test/mocked --runInBand --verbose",
+    "test:live": "jest test/live --runInBand --verbose",
+    "test:all": "jest test/mocked test/live --runInBand --verbose"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
+    "jest": "^30.4.2",
+    "prettier": "^3.9.6"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true,
+    "fsevents@2.3.3": true
+  }
+}
