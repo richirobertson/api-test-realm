@@ -81,6 +81,7 @@ function colorizeJson(json, colorsEnabled = pc.isColorSupported) {
           colorsEnabled,
         );
       }
+      if (!colorsEnabled) return match;
       if (stringValue) return keySuffix ? pc.cyan(match) : pc.green(match);
       if (literal === "true" || literal === "false") return pc.magenta(match);
       if (literal === "null") return pc.dim(match);
