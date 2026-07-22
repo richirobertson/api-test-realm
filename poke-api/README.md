@@ -17,6 +17,7 @@ The combination is intentional: the CLI provides a realistic consumer of the API
 
 ```sh
 cd poke-api
+# Requires Node.js 24 LTS (use `nvm use` if you have nvm installed)
 npm install
 npm link
 
@@ -27,7 +28,7 @@ npm test
 npm run test:live
 ```
 
-`npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
+This project requires Node.js 24 LTS; `.nvmrc` lets Node version managers select it with `nvm use`. `npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
 ## Reading test output
 
@@ -100,12 +101,12 @@ The live suite covers the kinds of behaviour a consumer needs confidence in:
 
 ## Test pyramid and certainty levels
 
-| Level | Location | Purpose | CI role |
-| --- | --- | --- | --- |
-| Deterministic | `test/mocked/` | Local app checks plus mocked client URL, error, and retry behaviour | Required on every pull request |
-| Live integration | `test/live/` | Public-API contracts, journeys, and response-quality checks | Manual only; never a pull-request gate |
-| Curated test proof | `test/proof/` | Demonstrates a chosen contract test detecting a controlled defect | Manual only; never a pull-request gate |
-| Shared assets | `test/schemas/`, `test/support/` | Constrained schemas, configuration, matchers, test data, and reusable suites | Used by both levels |
+| Level              | Location                         | Purpose                                                                      | CI role                                |
+| ------------------ | -------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------- |
+| Deterministic      | `test/mocked/`                   | Local app checks plus mocked client URL, error, and retry behaviour          | Required on every pull request         |
+| Live integration   | `test/live/`                     | Public-API contracts, journeys, and response-quality checks                  | Manual only; never a pull-request gate |
+| Curated test proof | `test/proof/`                    | Demonstrates a chosen contract test detecting a controlled defect            | Manual only; never a pull-request gate |
+| Shared assets      | `test/schemas/`, `test/support/` | Constrained schemas, configuration, matchers, test data, and reusable suites | Used by both levels                    |
 
 This split makes failures actionable: a pull-request failure points to repository behaviour, while a live-test failure may also reflect a dependency or network condition.
 

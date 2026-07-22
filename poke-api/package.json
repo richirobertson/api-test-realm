@@ -11,10 +11,15 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "poke": "node src/cli.js",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run test:unit",
     "test:celebrate": "node scripts/celebrate-success.js",
     "test:unit": "jest --runInBand --verbose --testPathIgnorePatterns=test/live && npm run test:celebrate",
     "test:mocked": "jest test/mocked --runInBand --verbose && npm run test:celebrate",
+    "test:mocked:report": "mkdir -p reports coverage && jest test/mocked --runInBand --verbose --json --outputFile=reports/mocked-test-results.json --coverage --coverageDirectory=coverage --coverageReporters=json-summary --coverageReporters=lcov && npm run test:celebrate",
     "test:proof": "node scripts/prove-suite.js",
     "test:live": "jest test/live --runInBand --verbose && npm run test:celebrate",
     "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json && npm run test:celebrate",
@@ -27,17 +32,21 @@
     ]
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "dependencies": {
     "express": "^5.2.1",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "ajv": "^8.20.0",
     "dotenv": "^17.4.2",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
     "supertest": "^7.2.2"
   }
 }

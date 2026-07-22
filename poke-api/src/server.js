@@ -1,5 +1,5 @@
 // Reuse the configured Express application from the application module.
-const app = require('./app');
+const app = require("./app");
 
 // Allow deployment environments to select a port; use 3000 for local development.
 const port = process.env.PORT || 3000;
