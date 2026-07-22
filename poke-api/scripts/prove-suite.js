@@ -17,9 +17,9 @@ const jestPath = path.join(
   "bin",
   "jest.js",
 );
-const expectedResponse = "res.status(200).json({ status: 'ok' });";
+const expectedResponse = 'res.status(200).json({ status: "ok" });';
 const deliberatelyBrokenResponse =
-  "res.status(200).json({ status: 'unhealthy' });";
+  'res.status(200).json({ status: "unhealthy" });';
 
 // Keep the demonstration easy to follow without hiding the underlying test details.
 const divider = () => console.log(pc.dim("─".repeat(72)));
