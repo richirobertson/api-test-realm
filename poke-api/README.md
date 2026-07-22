@@ -8,6 +8,8 @@ N.B this repo does not to monitor PokéAPI availability.
 
 This is deliberately both a testing showcase and a small working CLI.
 
+For a fuller explanation of the project's purpose, testing approach, and intended audience, see [the project overview](PROJECT_OVERVIEW.md).
+
 - **API testing practice:** deterministic mocked tests, live contract and journey checks, reusable schemas, data-driven coverage, negative paths, pagination, response quality, and CI that separates repository regressions from public-API availability.
 - **Consumer-focused functionality:** the `poke` command turns PokéAPI resources into concise terminal output, supports direct lookups and cross-resource queries, and can render ANSI/Unicode artwork.
 
