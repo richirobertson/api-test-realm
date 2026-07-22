@@ -90,8 +90,11 @@ function colorizeJson(json, colorsEnabled = pc.isColorSupported) {
 }
 
 // All CLI output uses readable, indented JSON so it remains useful to people and tools alike.
-function formatJson(value) {
-  return colorizeJson(JSON.stringify(markHighlightedValues(value), null, 2));
+function formatJson(value, colorsEnabled = pc.isColorSupported) {
+  return colorizeJson(
+    JSON.stringify(markHighlightedValues(value), null, 2),
+    colorsEnabled,
+  );
 }
 
 module.exports = { colorizeJson, formatJson, markHighlightedValues };

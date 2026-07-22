@@ -43,7 +43,7 @@ describe("JSON formatter", () => {
   });
 
   it("keeps non-interactive output valid JSON when colours are unavailable", () => {
-    expect(JSON.parse(formatJson({ region: "kanto" }))).toEqual({
+    expect(JSON.parse(formatJson({ region: "kanto" }, false))).toEqual({
       region: "kanto",
     });
   });
