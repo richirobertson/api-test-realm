@@ -1,10 +1,22 @@
-const { getWeatherByPlace } = require("../../src/weather-service");
+const {
+  getWeatherByPlace,
+  weatherDescription,
+} = require("../../src/weather-service");
 const { jsonResponse } = require("../support/responses");
 
 function completeForecast() {
   return {
     timezone: "Europe/London",
+    current_units: {
+      temperature_2m: "°C",
+      wind_speed_10m: "km/h",
+    },
+    daily_units: {
+      temperature_2m_max: "°C",
+      precipitation_sum: "mm",
+    },
     current: {
+      time: "2026-07-22T12:00",
       temperature_2m: 17.4,
       apparent_temperature: 16.8,
       weather_code: 3,
@@ -29,8 +41,11 @@ describe("weather-by-place journey", () => {
             {
               name: "London",
               country: "United Kingdom",
+              admin1: "England",
               latitude: 51.5085,
               longitude: -0.1257,
+              elevation: 14,
+              population: 8982000,
             },
           ],
         }),
@@ -44,11 +59,20 @@ describe("weather-by-place journey", () => {
       location: {
         name: "London",
         country: "United Kingdom",
-        latitude: 51.5085,
-        longitude: -0.1257,
+        administrativeArea: "England",
+        coordinates: { latitude: 51.5085, longitude: -0.1257 },
         timezone: "Europe/London",
+        elevationMetres: 14,
+        population: 8982000,
+      },
+      units: {
+        temperature: "°C",
+        windSpeed: "km/h",
+        precipitation: "mm",
       },
       current: {
+        observedAt: "2026-07-22T12:00",
+        conditions: "Overcast",
         temperature: 17.4,
         apparentTemperature: 16.8,
         weatherCode: 3,
@@ -57,16 +81,18 @@ describe("weather-by-place journey", () => {
       dailyForecast: [
         {
           date: "2026-07-22",
+          conditions: "Overcast",
           weatherCode: 3,
-          maximumTemperature: 19.1,
-          minimumTemperature: 12.4,
+          highTemperature: 19.1,
+          lowTemperature: 12.4,
           precipitation: 0.4,
         },
         {
           date: "2026-07-23",
+          conditions: "Mainly clear",
           weatherCode: 1,
-          maximumTemperature: 21.2,
-          minimumTemperature: 13.2,
+          highTemperature: 21.2,
+          lowTemperature: 13.2,
           precipitation: 0,
         },
       ],
@@ -76,6 +102,11 @@ describe("weather-by-place journey", () => {
       latitude: 51.5085,
       longitude: -0.1257,
     });
+  });
+
+  it("translates weather codes into readable conditions", () => {
+    expect(weatherDescription(95)).toBe("Thunderstorm");
+    expect(weatherDescription(777)).toBe("Weather code 777");
   });
 
   it("does not request a forecast when no location matches", async () => {

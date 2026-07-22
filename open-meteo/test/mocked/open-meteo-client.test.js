@@ -2,6 +2,7 @@ const { createOpenMeteoClient } = require("../../src/open-meteo-client");
 const { jsonResponse } = require("../support/responses");
 
 const options = {
+  archiveBaseUrl: "https://archive.example/v1",
   geocodingBaseUrl: "https://geocoding.example/v1",
   forecastBaseUrl: "https://forecast.example/v1",
   timeoutMs: 50,
@@ -23,7 +24,7 @@ describe("Open-Meteo client: deterministic transport behaviour", () => {
     );
     expect(fetchImplementation).toHaveBeenNthCalledWith(
       2,
-      "https://forecast.example/v1/forecast?latitude=40.7128&longitude=-74.006&current=temperature_2m%2Capparent_temperature%2Cweather_code%2Cwind_speed_10m&daily=weather_code%2Ctemperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum&forecast_days=3&timezone=auto",
+      "https://forecast.example/v1/forecast?latitude=40.7128&longitude=-74.006&current=temperature_2m%2Capparent_temperature%2Cweather_code%2Cwind_speed_10m&daily=weather_code%2Ctemperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum&forecast_days=3&temperature_unit=celsius&wind_speed_unit=kmh&timezone=auto",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
   });
@@ -50,5 +51,37 @@ describe("Open-Meteo client: deterministic transport behaviour", () => {
 
     expect(response.status).toBe(503);
     expect(fetchImplementation).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports explicit units, multi-location coordinates, and historical dates", async () => {
+    const fetchImplementation = jest.fn().mockResolvedValue(jsonResponse({}));
+    const client = createOpenMeteoClient({ ...options, fetchImplementation });
+
+    await client.getForecast({
+      latitude: "51.5,40.7",
+      longitude: "-0.1,-74",
+      temperatureUnit: "fahrenheit",
+      windSpeedUnit: "mph",
+      timezone: "Europe/London",
+      forecastDays: "2",
+    });
+    await client.getHistoricalWeather({
+      latitude: 51.5,
+      longitude: -0.1,
+      startDate: "2024-01-01",
+      endDate: "2024-01-03",
+      timezone: "Europe/London",
+    });
+
+    expect(fetchImplementation).toHaveBeenNthCalledWith(
+      1,
+      "https://forecast.example/v1/forecast?latitude=51.5%2C40.7&longitude=-0.1%2C-74&current=temperature_2m%2Capparent_temperature%2Cweather_code%2Cwind_speed_10m&daily=weather_code%2Ctemperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum&forecast_days=2&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=Europe%2FLondon",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(fetchImplementation).toHaveBeenNthCalledWith(
+      2,
+      "https://archive.example/v1/archive?latitude=51.5&longitude=-0.1&start_date=2024-01-01&end_date=2024-01-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_sum&timezone=Europe%2FLondon",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 });

@@ -1,4 +1,5 @@
 const {
+  archiveBaseUrl,
   forecastBaseUrl,
   geocodingBaseUrl,
   requestTimeoutMs,
@@ -8,6 +9,7 @@ const { createOpenMeteoClient } = require("../../src/open-meteo-client");
 jest.setTimeout(requestTimeoutMs * 3);
 
 const client = createOpenMeteoClient({
+  archiveBaseUrl,
   geocodingBaseUrl,
   forecastBaseUrl,
   timeoutMs: requestTimeoutMs,
@@ -89,5 +91,60 @@ describe("Open-Meteo live integration", () => {
     expect(response.status).toBeGreaterThanOrEqual(400);
     expect(response.status).toBeLessThan(500);
     expect(response.headers.get("content-type")).toMatch(/application\/json/i);
+  });
+
+  it("returns one forecast object per requested location with explicit units and timezone", async () => {
+    const response = await client.getForecast({
+      latitude: "51.5085,40.7128",
+      longitude: "-0.1257,-74.006",
+      temperatureUnit: "fahrenheit",
+      windSpeedUnit: "mph",
+      timezone: "Europe/London",
+      forecastDays: "2",
+    });
+
+    expect(response.status).toBe(200);
+    const forecasts = await response.json();
+    expect(forecasts).toHaveLength(2);
+    forecasts.forEach((forecast) => {
+      expect(forecast.timezone).toBe("Europe/London");
+      expect(forecast.current_units).toEqual(
+        expect.objectContaining({
+          temperature_2m: "°F",
+          wind_speed_10m: "mp/h",
+        }),
+      );
+      expectAlignedDailySeries(forecast.daily);
+    });
+  });
+
+  it("returns a historical daily time series for a closed past date range", async () => {
+    const response = await client.getHistoricalWeather({
+      latitude: london.latitude,
+      longitude: london.longitude,
+      startDate: "2024-01-01",
+      endDate: "2024-01-03",
+      timezone: "Europe/London",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toMatch(/application\/json/i);
+    const historical = await response.json();
+    expect(historical.timezone).toBe("Europe/London");
+    expect(historical.daily_units).toEqual(
+      expect.objectContaining({
+        temperature_2m_max: "°C",
+        temperature_2m_min: "°C",
+        precipitation_sum: "mm",
+      }),
+    );
+    expect(historical.daily.time).toEqual([
+      "2024-01-01",
+      "2024-01-02",
+      "2024-01-03",
+    ]);
+    expect(historical.daily.temperature_2m_max).toHaveLength(3);
+    expect(historical.daily.temperature_2m_min).toHaveLength(3);
+    expect(historical.daily.precipitation_sum).toHaveLength(3);
   });
 });

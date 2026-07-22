@@ -1,4 +1,5 @@
 function createOpenMeteoClient({
+  archiveBaseUrl,
   geocodingBaseUrl,
   forecastBaseUrl,
   fetchImplementation = fetch,
@@ -43,7 +44,14 @@ function createOpenMeteoClient({
           format: "json",
         }),
       ),
-    getForecast: ({ latitude, longitude }) =>
+    getForecast: ({
+      latitude,
+      longitude,
+      temperatureUnit = "celsius",
+      windSpeedUnit = "kmh",
+      timezone = "auto",
+      forecastDays = "3",
+    }) =>
       get(
         buildUrl(forecastBaseUrl, "forecast", {
           latitude,
@@ -52,8 +60,27 @@ function createOpenMeteoClient({
             "temperature_2m,apparent_temperature,weather_code,wind_speed_10m",
           daily:
             "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
-          forecast_days: "3",
-          timezone: "auto",
+          forecast_days: forecastDays,
+          temperature_unit: temperatureUnit,
+          wind_speed_unit: windSpeedUnit,
+          timezone,
+        }),
+      ),
+    getHistoricalWeather: ({
+      latitude,
+      longitude,
+      startDate,
+      endDate,
+      timezone,
+    }) =>
+      get(
+        buildUrl(archiveBaseUrl, "archive", {
+          latitude,
+          longitude,
+          start_date: startDate,
+          end_date: endDate,
+          daily: "temperature_2m_max,temperature_2m_min,precipitation_sum",
+          timezone,
         }),
       ),
   };
