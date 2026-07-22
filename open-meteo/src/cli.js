@@ -5,6 +5,7 @@ const {
   requestTimeoutMs,
 } = require("./config");
 const { createOpenMeteoClient } = require("./open-meteo-client");
+const { formatJson } = require("./formatters");
 const { getWeatherByPlace } = require("./weather-service");
 
 const usage = `Usage:
@@ -12,11 +13,9 @@ const usage = `Usage:
 
 Examples:
   weather London
-  weather "New York"`;
+  weather "New York"
 
-function formatJson(value) {
-  return JSON.stringify(value, null, 2);
-}
+The result includes local time, readable conditions, units, and a three-day forecast.`;
 
 async function run(
   argumentsList,

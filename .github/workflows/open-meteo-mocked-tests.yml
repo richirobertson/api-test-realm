@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   mocked-tests:
-    name: Run Open-Meteo deterministic tests and publish coverage
+    name: Open-Meteo — deterministic tests and coverage
     runs-on: ubuntu-latest
     defaults:
       run:

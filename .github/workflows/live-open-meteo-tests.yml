@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   live-tests:
-    name: Run live Open-Meteo contract checks
+    name: Open-Meteo — live public API checks
     runs-on: ubuntu-latest
     defaults:
       run:

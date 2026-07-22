@@ -17,7 +17,9 @@ weather "New York"
 
 It resolves the supplied place through Open-Meteo's geocoding API, then uses the chosen result's coordinates to request current weather and a short daily forecast.
 
-The command presents a concise, readable JSON summary rather than expose the upstream payload directly. Its output includes the selected location, country, coordinates, timezone, current conditions, and a short daily forecast.
+The command presents a concise, readable JSON summary rather than expose the upstream payload directly. Its output includes the selected location, administrative area, country, coordinates, elevation, population where available, timezone, observation time, readable conditions, explicit units, and a short daily forecast.
+
+When the terminal supports colour, the selected location is warm orange while country, timezone, and weather-condition values receive distinct contextual colours. The same command still produces valid uncoloured JSON when colour is unavailable, which keeps it useful in pipes and automation.
 
 To install the local command and run the deterministic tests:
 

@@ -21,6 +21,9 @@
   "engines": {
     "node": ">=24"
   },
+  "dependencies": {
+    "picocolors": "^1.1.1"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.7.0",

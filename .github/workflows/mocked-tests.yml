@@ -1,4 +1,4 @@
-name: PR checks — deterministic tests and coverage
+name: PR checks — PokéAPI deterministic tests and coverage
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   mocked-tests:
-    name: Run deterministic tests and publish coverage
+    name: PokéAPI — deterministic tests and coverage
     runs-on: ubuntu-latest
     defaults:
       run:
