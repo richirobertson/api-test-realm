@@ -1,0 +1,56 @@
+name: Live Open-Meteo tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      geocoding_base_url:
+        description: Compatible Open-Meteo geocoding API base URL
+        required: false
+        default: https://geocoding-api.open-meteo.com/v1
+      forecast_base_url:
+        description: Compatible Open-Meteo forecast API base URL
+        required: false
+        default: https://api.open-meteo.com/v1
+      archive_base_url:
+        description: Compatible Open-Meteo archive API base URL
+        required: false
+        default: https://archive-api.open-meteo.com/v1
+
+permissions:
+  contents: read
+
+jobs:
+  live-tests:
+    name: Run live Open-Meteo contract checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: open-meteo
+    env:
+      OPEN_METEO_GEOCODING_URL: ${{ inputs.geocoding_base_url || 'https://geocoding-api.open-meteo.com/v1' }}
+      OPEN_METEO_FORECAST_URL: ${{ inputs.forecast_base_url || 'https://api.open-meteo.com/v1' }}
+      OPEN_METEO_ARCHIVE_URL: ${{ inputs.archive_base_url || 'https://archive-api.open-meteo.com/v1' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: open-meteo/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run live checks and write evidence
+        run: npm run test:live:report
+
+      - name: Upload Open-Meteo live test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-meteo-live-test-report
+          path: open-meteo/reports/live-test-results.json
+          if-no-files-found: warn

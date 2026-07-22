@@ -1,0 +1,47 @@
+name: PR checks — Open-Meteo deterministic tests and coverage
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  mocked-tests:
+    name: Run Open-Meteo deterministic tests and publish coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: open-meteo
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: open-meteo/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run deterministic tests and write evidence
+        run: npm run test:mocked:report
+
+      - name: Upload Open-Meteo mocked test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-meteo-mocked-test-report
+          path: open-meteo/reports/mocked-test-results.json
+          if-no-files-found: warn
+
+      - name: Upload Open-Meteo mocked test coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-meteo-mocked-test-coverage
+          path: open-meteo/coverage
+          if-no-files-found: warn
