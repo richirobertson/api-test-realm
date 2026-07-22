@@ -27,5 +27,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run deterministic mocked tests
-        run: npm run test:mocked
+      - name: Run deterministic mocked tests and write evidence
+        run: npm run test:mocked:report
+
+      - name: Upload mocked test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocked-test-report
+          path: poke-api/reports/mocked-test-results.json
+          if-no-files-found: warn
+
+      - name: Upload mocked test coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocked-test-coverage
+          path: poke-api/coverage
+          if-no-files-found: warn

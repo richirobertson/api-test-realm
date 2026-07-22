@@ -19,6 +19,7 @@
     "test:celebrate": "node scripts/celebrate-success.js",
     "test:unit": "jest --runInBand --verbose --testPathIgnorePatterns=test/live && npm run test:celebrate",
     "test:mocked": "jest test/mocked --runInBand --verbose && npm run test:celebrate",
+    "test:mocked:report": "mkdir -p reports coverage && jest test/mocked --runInBand --verbose --json --outputFile=reports/mocked-test-results.json --coverage --coverageDirectory=coverage --coverageReporters=json-summary --coverageReporters=lcov && npm run test:celebrate",
     "test:proof": "node scripts/prove-suite.js",
     "test:live": "jest test/live --runInBand --verbose && npm run test:celebrate",
     "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json && npm run test:celebrate",
