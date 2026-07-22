@@ -1,4 +1,4 @@
-name: Mocked tests
+name: PR checks — deterministic tests and coverage
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   mocked-tests:
-    name: Deterministic mocked tests
+    name: Run deterministic tests and publish coverage
     runs-on: ubuntu-latest
     defaults:
       run:
