@@ -1,0 +1,22 @@
+#compdef poke
+
+_poke() {
+  local cache_root cache_file
+  cache_root="${XDG_CACHE_HOME:-$HOME/.cache}/poke-api-realm"
+  cache_file="$cache_root/completions.tsv"
+
+  if [[ ! -r "$cache_file" ]]; then
+    _message "Run: npm run poke:completion:refresh"
+    return 0
+  fi
+
+  if (( CURRENT == 2 )); then
+    compadd -- --help help ${(f)"$(awk -F '\t' '$1 == "pokemon" || $1 == "type" || $1 == "move" { print $2 }' "$cache_file")"}
+    return 0
+  fi
+
+  # A final term can be a region; a Pokémon's second term can alternatively be a move.
+  compadd -- ${(f)"$(awk -F '\t' '$1 == "region" || $1 == "move" { print $2 }' "$cache_file")"}
+}
+
+_poke "$@"

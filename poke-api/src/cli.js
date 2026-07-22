@@ -13,7 +13,6 @@ const { renderThumbnail, isChafaAvailable } = require("./image-renderer");
 
 const usage = `Usage:
   npm run poke -- {{pokemon}}
-  npm run poke -- {{pokemon}} --image
   npm run poke -- {{pokemon}} {{region-or-move}}
   npm run poke -- {{type-or-move}} {{region}}
 
@@ -40,9 +39,7 @@ async function run(
   { client, stdout = console.log, stderr = console.error } = {},
 ) {
   const canRenderImages = isChafaAvailable();
-  const terms = argumentsList.filter(
-    (argument) => argument !== "--image" && argument !== "--images",
-  );
+  const terms = argumentsList;
   const apiClient =
     client || createPokeApiClient({ baseUrl, timeoutMs: requestTimeoutMs });
 
