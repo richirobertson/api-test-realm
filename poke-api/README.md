@@ -92,6 +92,20 @@ poke sky attack kanto
 
 For multi-word moves, write the move naturally: the CLI treats the final word as the region and converts the preceding words into the PokéAPI move name.
 
+### Zsh tab completion
+
+After running `npm link`, Zsh can suggest Pokémon, moves, types, and regions for `poke`. Install the tracked completion definition once, then refresh its local PokéAPI-derived suggestion list whenever you want:
+
+```sh
+mkdir -p ~/.zsh/completions
+cp completions/_poke ~/.zsh/completions/_poke
+fpath=(~/.zsh/completions $fpath)
+autoload -Uz compinit && compinit
+npm run poke:completion:refresh
+```
+
+Add the `fpath` and `compinit` lines to `~/.zshrc` to keep completion enabled in new terminals. The refresh command writes a cache under `~/.cache/poke-api-realm/` (or `$XDG_CACHE_HOME`) and does not run during normal `poke` commands, so Tab completion stays quick and works offline after a refresh. Re-run it when you want the suggestions to reflect newer PokéAPI data.
+
 ## Scope
 
 The live suite covers the kinds of behaviour a consumer needs confidence in:
