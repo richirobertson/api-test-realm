@@ -7,6 +7,10 @@ const {
 const { createOpenMeteoClient } = require("./open-meteo-client");
 const { formatJson } = require("./formatters");
 const { getWeatherByPlace } = require("./weather-service");
+const {
+  isChafaAvailable,
+  renderWeatherSymbol,
+} = require("./weather-image-renderer");
 
 const usage = `Usage:
   weather <place>
@@ -19,7 +23,13 @@ The result includes local time, readable conditions, units, and a three-day fore
 
 async function run(
   argumentsList,
-  { client, stdout = console.log, stderr = console.error } = {},
+  {
+    client,
+    stdout = console.log,
+    stderr = console.error,
+    canRenderWeatherSymbol = isChafaAvailable,
+    renderSymbol = renderWeatherSymbol,
+  } = {},
 ) {
   if (!argumentsList.length || ["help", "--help"].includes(argumentsList[0])) {
     stdout(usage);
@@ -34,9 +44,10 @@ async function run(
         forecastBaseUrl,
         timeoutMs: requestTimeoutMs,
       });
-    stdout(
-      formatJson(await getWeatherByPlace(apiClient, argumentsList.join(" "))),
-    );
+    const weather = await getWeatherByPlace(apiClient, argumentsList.join(" "));
+    if (canRenderWeatherSymbol())
+      stdout(renderSymbol(weather.current.weatherCode));
+    stdout(formatJson(weather));
     return 0;
   } catch (error) {
     stderr(formatJson({ error: error.message }));
