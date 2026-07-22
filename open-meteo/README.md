@@ -36,6 +36,8 @@ Run the real-provider checks only when deliberate integration validation is usef
 npm run test:live
 ```
 
+Every successful completed test command renders the repository-owned sunshine GIF in `assets/test-success.gif` when [Chafa](https://hpjansson.org/chafa/) is installed (`brew install chafa`). It is a small visual success cue only: a test failure stops the command before the GIF runs, and without Chafa the command prints a short success message instead.
+
 Both test layers can also write machine-readable evidence for CI:
 
 ```sh

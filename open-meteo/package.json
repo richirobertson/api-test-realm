@@ -11,12 +11,13 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "jest test/mocked --runInBand --verbose",
-    "test:mocked": "jest test/mocked --runInBand --verbose",
-    "test:mocked:report": "mkdir -p reports coverage && jest test/mocked --runInBand --verbose --json --outputFile=reports/mocked-test-results.json --coverage --coverageDirectory=coverage --coverageReporters=json-summary --coverageReporters=lcov",
-    "test:live": "jest test/live --runInBand --verbose",
-    "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json",
-    "test:all": "jest test/mocked test/live --runInBand --verbose"
+    "test": "npm run test:mocked",
+    "test:celebrate": "node scripts/celebrate-success.js",
+    "test:mocked": "jest test/mocked --runInBand --verbose && npm run test:celebrate",
+    "test:mocked:report": "mkdir -p reports coverage && jest test/mocked --runInBand --verbose --json --outputFile=reports/mocked-test-results.json --coverage --coverageDirectory=coverage --coverageReporters=json-summary --coverageReporters=lcov && npm run test:celebrate",
+    "test:live": "jest test/live --runInBand --verbose && npm run test:celebrate",
+    "test:live:report": "mkdir -p reports && jest test/live --runInBand --verbose --json --outputFile=reports/live-test-results.json && npm run test:celebrate",
+    "test:all": "jest test/mocked test/live --runInBand --verbose && npm run test:celebrate"
   },
   "engines": {
     "node": ">=24"
