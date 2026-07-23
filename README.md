@@ -1,5 +1,9 @@
 # API Test Realm
 
+[![PokéAPI checks](https://github.com/richirobertson/api-test-realm/actions/workflows/mocked-tests.yml/badge.svg?branch=main)](https://github.com/richirobertson/api-test-realm/actions/workflows/mocked-tests.yml)
+[![Open-Meteo checks](https://github.com/richirobertson/api-test-realm/actions/workflows/open-meteo-mocked-tests.yml/badge.svg?branch=main)](https://github.com/richirobertson/api-test-realm/actions/workflows/open-meteo-mocked-tests.yml)
+[![CodeQL](https://github.com/richirobertson/api-test-realm/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/richirobertson/api-test-realm/security/code-scanning)
+
 API Test Realm is a portfolio of small, practical API-testing examples. Each example pairs a useful command-line tool with a test suite that demonstrates how to build confidence in an API integration without creating brittle or misleading checks.
 
 The focus is on choices that matter in real teams: fast deterministic feedback, deliberate live integration checks, consumer-centred contracts, useful failure evidence, and security-aware automation.
@@ -65,11 +69,11 @@ This separation makes failures easier to interpret: a mocked-test failure is lik
 | Security                  | GitHub CodeQL default setup                                |
 | Optional terminal visuals | Chafa with repository-owned images and GIFs                |
 
-## A useful review path
+## How to review this repo
 
-1. Open either example’s Quick start and run the deterministic suite.
-2. Read its `test/mocked/` folder to see the fast feedback layer.
-3. Compare it with `test/live/` to see what is intentionally checked against the real provider.
-4. Inspect the GitHub Actions workflows in [`.github/workflows`](.github/workflows) to see the CI evidence and separation of responsibilities.
+1. Choose an example and follow its Quick start.
+2. Run its mocked suite (`npm test`) and inspect `test/mocked/` to see the fast feedback layer.
+3. Compare it with `test/live/`, then run `npm run test:live` when you want real-provider confidence.
+4. Open the workflow run in GitHub Actions and download the Jest JSON report or coverage artifact to inspect CI evidence without rerunning locally.
 
 The project is intentionally small enough to inspect in one sitting, but broad enough to support discussion about test design, API contracts, and delivery confidence.

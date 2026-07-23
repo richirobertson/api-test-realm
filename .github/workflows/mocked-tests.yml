@@ -27,6 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint PokéAPI JavaScript
+        run: npm run lint
+
+      - name: Verify PokéAPI formatting
+        run: npm run format:check
+
       - name: Run deterministic mocked tests and write evidence
         run: npm run test:mocked:report
 

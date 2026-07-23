@@ -27,6 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint Open-Meteo JavaScript
+        run: npm run lint
+
+      - name: Verify Open-Meteo formatting
+        run: npm run format:check
+
       - name: Run deterministic tests and write evidence
         run: npm run test:mocked:report
 
