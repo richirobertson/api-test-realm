@@ -32,6 +32,17 @@ npm run test:live
 
 This project requires Node.js 24 LTS. `npm link` makes `weather` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and emits readable JSON without image links. `npm test` is deterministic. `npm run test:live` makes real calls to Open-Meteo. `npm run test:all` runs both levels together.
 
+### Switching between examples
+
+If you use Zsh, add navigation aliases once so you can move between the two examples from anywhere. These deliberately avoid the `poke` and `weather` command names, which are reserved for the CLIs.
+
+```sh
+printf '\nalias cd-poke='\''cd /Users/richrobertson/Development/api-test-realm/poke-api'\''\nalias cd-weather='\''cd /Users/richrobertson/Development/api-test-realm/open-meteo'\''\nalias cd-realm='\''cd /Users/richrobertson/Development/api-test-realm'\''\n' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Use `cd-poke` for the PokéAPI example, `cd-weather` for this example, and `cd-realm` for the repository root. The `weather London` command continues to run the Open-Meteo CLI.
+
 ## Terminal explorer
 
 The first user-facing feature is a `weather` command:

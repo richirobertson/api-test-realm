@@ -32,6 +32,17 @@ npm run test:live
 
 This project requires Node.js 24 LTS; `.nvmrc` lets Node version managers select it with `nvm use`. `npm link` makes `poke` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and includes an `imageUrl` in its JSON output. `npm test` is deterministic. `npm run test:live` makes real calls to PokéAPI. `npm run test:all` runs both.
 
+### Switching between examples
+
+If you use Zsh, add navigation aliases once so you can move between the two examples from anywhere. These deliberately avoid the `poke` and `weather` command names, which are reserved for the CLIs.
+
+```sh
+printf '\nalias cd-poke='\''cd /Users/richrobertson/Development/api-test-realm/poke-api'\''\nalias cd-weather='\''cd /Users/richrobertson/Development/api-test-realm/open-meteo'\''\nalias cd-realm='\''cd /Users/richrobertson/Development/api-test-realm'\''\n' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Use `cd-poke` for this example, `cd-weather` for the Open-Meteo example, and `cd-realm` for the repository root. The `poke pikachu` command continues to run the PokéAPI CLI.
+
 ### Docker
 
 The repository includes a small Docker image for a repeatable, dependency-isolated mocked-test run. It has no supporting services and does not run the live PokéAPI suite.
