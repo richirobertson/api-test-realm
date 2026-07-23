@@ -21,6 +21,17 @@ npm run test:live
 
 `npm link` makes `weather` available as a command. Chafa is optional: without it, the CLI still emits readable JSON. `npm test` is deterministic; `npm run test:live` calls Open-Meteo; `npm run test:all` runs both.
 
+### Docker
+
+Run the deterministic mocked suite in a small, dependency-isolated container:
+
+```sh
+docker build -t api-test-realm-open-meteo .
+docker run --rm api-test-realm-open-meteo
+```
+
+The image uses Node 24, installs with `npm ci`, and runs `npm run test:mocked`. It has no supporting services and does not run live checks.
+
 ## Use the CLI
 
 ```sh

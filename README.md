@@ -81,6 +81,15 @@ This separation makes failures easier to interpret: a mocked-test failure is lik
 | Security                  | GitHub CodeQL default setup                                |
 | Optional terminal visuals | Chafa with repository-owned images and GIFs                |
 
+## Docker
+
+Both examples include a small Docker image for a repeatable, dependency-isolated deterministic test run:
+
+- [PokéAPI Docker instructions](poke-api/README.md#docker)
+- [Open-Meteo Docker instructions](open-meteo/README.md#docker)
+
+The images use Node 24 and `npm ci`, run mocked tests only, and add no supporting services. They demonstrate a simple reproducible test environment—not a production deployment model.
+
 ## How to review this repo
 
 1. Choose an example and follow its Quick start.
