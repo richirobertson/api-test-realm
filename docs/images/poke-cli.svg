@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440" role="img" aria-labelledby="title description">
+  <title id="title">PokéAPI CLI example</title>
+  <desc id="description">A terminal-style preview of the poke pikachu command returning a curated Pokémon profile.</desc>
+  <rect width="900" height="440" rx="16" fill="#101827"/>
+  <rect width="900" height="48" rx="16" fill="#1f2937"/>
+  <rect y="32" width="900" height="16" fill="#1f2937"/>
+  <circle cx="30" cy="24" r="7" fill="#ff5f57"/>
+  <circle cx="54" cy="24" r="7" fill="#febc2e"/>
+  <circle cx="78" cy="24" r="7" fill="#28c840"/>
+  <text x="112" y="30" fill="#d1d5db" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16">PokéAPI terminal explorer</text>
+  <rect x="612" y="92" width="238" height="280" rx="12" fill="#172235" stroke="#334155"/>
+  <image x="632" y="112" width="198" height="198" image-rendering="pixelated" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgBAMAAAAQtmoLAAAAKlBMVEUAAAAAAAApKSlBQUpiMQhzc4OcUgDFIBjelADmWkH2vSD25lL/9qT////Vai+KAAAAAXRSTlMAQObYZgAAAdlJREFUWMPtlsFqwkAQhjclhB6ztRRReqiHXnoSbz0piLX2JcwliD6A0JsgEuoDlNJTQKzsnkJpSDN9A3PpG3U2ST12J4dCKftjNML/MTObndkwZmRkZPTX5Vb0Wxe/DrQq5nRSHehWBK4PQKtFAWpiU9wctTodygI0SsCZQqfTJgK+P3ZmgAClfltsJ9k+Qf8bKQACQZZlgHptqwC+lhh+ZNleAVz5HRjrAEwGUi4Tr/wX61JaSMzm8wrygo9BD5wjENVKYI3hNDnZbRiqlHJfAHrAuVQmeH9eqooJwB3AABN5egyL+rVF3MrldDtJ5/OwDKADbkSuHJAVgJf7kE1FTmg2lCNKheoOCa7froU2OSo5owLSHeG33s+aJQCuTfKzJhQBsNjRlpEAJHZSrY4tKBNkHeNSqk3XZXUKYEFSApH18D1BfgYAmwZ7CKJhsOsRgHUB7CAMgj5lGM9AIfgJ6wtGA2Ko45UK7lPmUjPGmRThlQr3zCMAM/BxhXz1MLhPAKyiBwCkEH2PkJIlCn+apiKklGDlPQBCYoSQdKBMxUG0o6hx8O9oh53VEAHnqndIj42x/kotpjWYrGgB7Djp5c6R8GgR+Gn5G0cVXwl41bcUIyMjo/+qLw92FGczGN4XAAAAAElFTkSuQmCC"/>
+  <text x="636" y="346" fill="#d1d5db" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14">Pikachu artwork preview</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">
+    <text x="32" y="86" fill="#93c5fd">$</text>
+    <text x="54" y="86" fill="#f9fafb">poke pikachu</text>
+    <text x="32" y="124" fill="#9ca3af">{</text>
+    <text x="52" y="156" fill="#9ca3af">&quot;pokemon&quot;: {</text>
+    <text x="76" y="188" fill="#9ca3af">&quot;id&quot;: </text><text x="148" y="188" fill="#fbbf24">25</text><text x="170" y="188" fill="#9ca3af">,</text>
+    <text x="76" y="220" fill="#9ca3af">&quot;name&quot;: </text><text x="176" y="220" fill="#f472b6">&quot;pikachu&quot;</text><text x="274" y="220" fill="#9ca3af">,</text>
+    <text x="76" y="252" fill="#9ca3af">&quot;types&quot;: [</text><text x="184" y="252" fill="#fbbf24">&quot;electric&quot;</text><text x="294" y="252" fill="#9ca3af">],</text>
+    <text x="76" y="284" fill="#9ca3af">&quot;heightMetres&quot;: </text><text x="270" y="284" fill="#a7f3d0">0.4</text><text x="303" y="284" fill="#9ca3af">,</text>
+    <text x="76" y="316" fill="#9ca3af">&quot;weightKilograms&quot;: </text><text x="292" y="316" fill="#a7f3d0">6</text>
+    <text x="52" y="348" fill="#9ca3af">},</text>
+    <text x="52" y="380" fill="#9ca3af">&quot;regionalCoverage&quot;: [</text><text x="292" y="380" fill="#c4b5fd">...</text><text x="325" y="380" fill="#9ca3af">],</text>
+    <text x="52" y="412" fill="#9ca3af">&quot;evolutionLine&quot;: </text><text x="244" y="412" fill="#c4b5fd">{ ... }</text>
+  </g>
+</svg>

@@ -17,6 +17,18 @@ Choose an example based on the kind of API risk you want to explore:
 
 Each folder is self-contained: install dependencies and run commands from inside the chosen example.
 
+## See the CLIs
+
+The commands return focused, user-friendly JSON rather than pass through large upstream payloads. These previews show the kind of result each example is built to test.
+
+### PokéAPI
+
+![Terminal preview of `poke pikachu`](docs/images/poke-cli.svg)
+
+### Open-Meteo
+
+![Terminal preview of `weather London`](docs/images/weather-cli.svg)
+
 ## What this repository demonstrates
 
 - **Test strategy, not just test code:** mocked checks provide quick, repeatable pull-request feedback; live checks validate real public integrations without making their availability a merge condition.
