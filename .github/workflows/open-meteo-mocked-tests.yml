@@ -38,7 +38,7 @@ jobs:
 
       - name: Upload Open-Meteo mocked test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: open-meteo-mocked-test-report
           path: open-meteo/reports/mocked-test-results.json
@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload Open-Meteo mocked test coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: open-meteo-mocked-test-coverage
           path: open-meteo/coverage
