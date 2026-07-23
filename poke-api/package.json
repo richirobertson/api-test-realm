@@ -1,8 +1,14 @@
 {
-  "name": "api-test-realm",
+  "name": "poke-api-test-realm",
   "version": "1.0.0",
   "private": true,
-  "description": "A starter Node.js API with an automated Supertest suite.",
+  "description": "A PokéAPI API-testing example with a small Pokémon CLI.",
+  "keywords": [
+    "api-testing",
+    "jest",
+    "pokeapi",
+    "cli"
+  ],
   "main": "src/server.js",
   "bin": {
     "poke": "src/cli.js"
