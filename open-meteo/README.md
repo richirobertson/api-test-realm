@@ -1,12 +1,38 @@
 # Open-Meteo testing example
 
-## Status
+An API-testing example using Jest and the public [Open-Meteo APIs](https://open-meteo.com/en/docs). Its purpose is to demonstrate consumer-focused testing for parameter-driven, time-series data.
 
-This section contains a deterministic Open-Meteo consumer and an opt-in live integration suite. It establishes the consumer contract before validating the real provider, so routine development feedback stays repeatable and external availability does not block it.
+N.B. this project does not treat Open-Meteo availability as a merge condition.
 
-The example sits alongside `poke-api/` as a self-contained Node.js project. It uses the public [Open-Meteo APIs](https://open-meteo.com/en/docs) to demonstrate API testing for parameter-driven, time-series data.
+## What this repository demonstrates
 
-## First increment: weather by place
+This is deliberately both a testing showcase and a small working CLI.
+
+For a fuller explanation of the project's purpose, testing approach, and intended audience, see [the project overview](PROJECT_OVERVIEW.md).
+
+- **API testing practice:** deterministic mocked tests, live contract checks, error handling, time-series alignment, multi-location responses, units, timezones, historical data, and CI evidence that separates repository regressions from public-API availability.
+- **Consumer-focused functionality:** the `weather` command turns geocoding and forecast data into a concise terminal summary with readable conditions and local weather symbols.
+
+The combination is intentional: the CLI provides a realistic consumer of the API, while the test suite shows how to verify a parameter-driven integration responsibly.
+
+## Quick start
+
+```sh
+cd open-meteo
+# Requires Node.js 24 LTS (use `nvm use` if you have nvm installed)
+npm install
+npm link
+
+# Optional: render local weather symbols and the sunshine test-success GIF
+brew install chafa
+
+npm test
+npm run test:live
+```
+
+This project requires Node.js 24 LTS. `npm link` makes `weather` available as a short local command. Chafa is an optional visual enhancement: without it, every command still works normally and emits readable JSON without image links. `npm test` is deterministic. `npm run test:live` makes real calls to Open-Meteo. `npm run test:all` runs both levels together.
+
+## Terminal explorer
 
 The first user-facing feature is a `weather` command:
 
@@ -21,22 +47,20 @@ The command presents a concise, readable JSON summary rather than expose the ups
 
 When the terminal supports colour, the selected location is warm orange while country, timezone, and weather-condition values receive distinct contextual colours. The same command still produces valid uncoloured JSON when colour is unavailable, which keeps it useful in pipes and automation.
 
-To install the local command and run the deterministic tests:
-
-```sh
-npm install
-npm link
-weather London
-npm test
-```
-
-Run the real-provider checks only when deliberate integration validation is useful:
-
-```sh
-npm run test:live
-```
+When [Chafa](https://hpjansson.org/chafa/) is installed, a matching local weather symbol is rendered above the JSON—directly before the `current.conditions` value. Symbols are repository-owned assets, selected from the Open-Meteo weather code; the JSON never includes external image links.
 
 Every successful completed test command renders the repository-owned sunshine GIF in `assets/test-success.gif` when [Chafa](https://hpjansson.org/chafa/) is installed (`brew install chafa`). It is a small visual success cue only: a test failure stops the command before the GIF runs, and without Chafa the command prints a short success message instead.
+
+## Reading test output
+
+All test commands run Jest in verbose mode. Each line identifies the behaviour being checked and failures include the relevant expectation or error. Use the commands according to the certainty you need:
+
+- `npm test` — deterministic mocked tests; the fastest feedback for repository changes.
+- `npm run lint` — checks JavaScript with ESLint.
+- `npm run format:check` — verifies Prettier formatting without changing files.
+- `npm run test:mocked:report` — runs mocked tests and writes Jest JSON results plus LCOV coverage to `reports/` and `coverage/`.
+- `npm run test:live` — real Open-Meteo checks; useful when validating the public integration.
+- `npm run test:all` — runs both levels together.
 
 Both test layers can also write machine-readable evidence for CI:
 
