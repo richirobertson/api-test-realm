@@ -1,3 +1,5 @@
+const { stripVTControlCharacters } = require("node:util");
+
 jest.mock("../../src/image-renderer", () => ({
   isChafaAvailable: jest.fn(() => true),
   renderThumbnail: jest.fn(async () => "rendered-pokemon-image"),
@@ -69,7 +71,10 @@ describe("PokéAPI terminal CLI", () => {
     expect(renderThumbnail).toHaveBeenCalledWith(
       "https://example.test/pikachu.png",
     );
-    expect(stdout.mock.calls.map(([output]) => output)).toEqual([
+    const plainOutputs = stdout.mock.calls.map(([output]) =>
+      stripVTControlCharacters(output),
+    );
+    expect(plainOutputs).toEqual([
       "rendered-pokemon-image",
       expect.stringContaining("Type           electric"),
       "rendered-pokemon-image",
