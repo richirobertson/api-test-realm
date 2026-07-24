@@ -215,7 +215,27 @@ function formatError(message, colorsEnabled = pc.isColorSupported) {
   )}\n  ${message}`;
 }
 
+function formatAlternateArtworkNote(
+  pokemon,
+  colorsEnabled = pc.isColorSupported,
+) {
+  return `\n${paint(colorsEnabled, pc.bold, "GAME SPRITE")}\n${paint(
+    colorsEnabled,
+    pc.dim,
+    `  ${pokemon.alternateImageSource || "Game sprite unavailable"}`,
+  )}`;
+}
+
+function formatShinyArtworkNote(pokemon, colorsEnabled = pc.isColorSupported) {
+  return `\n${paint(colorsEnabled, pc.bold, "✦ SHINY FORM")}\n${paint(
+    colorsEnabled,
+    pc.dim,
+    `  ${words(pokemon.name)} in its alternate shiny colours`,
+  )}`;
+}
+
 module.exports = {
+  formatAlternateArtworkNote,
   formatError,
   formatMoreResults,
   formatMoveProfile,
@@ -223,4 +243,5 @@ module.exports = {
   formatRegionProfile,
   formatSearchResult,
   formatSearchSummary,
+  formatShinyArtworkNote,
 };

@@ -9,6 +9,7 @@ const {
   buildPokemonMoveProfile,
 } = require("./pokemon-profile-service");
 const {
+  formatAlternateArtworkNote,
   formatError,
   formatMoreResults,
   formatMoveProfile,
@@ -16,6 +17,7 @@ const {
   formatRegionProfile,
   formatSearchResult,
   formatSearchSummary,
+  formatShinyArtworkNote,
 } = require("./formatters");
 const { renderThumbnail, isChafaAvailable } = require("./image-renderer");
 
@@ -63,9 +65,26 @@ async function run(
         canRenderImages && profile.pokemon.imageUrl
           ? await renderThumbnail(profile.pokemon.imageUrl)
           : null;
+      const shinyThumbnail =
+        canRenderImages && profile.pokemon.shinyImageUrl
+          ? await renderThumbnail(profile.pokemon.shinyImageUrl)
+          : thumbnail;
+      const alternateThumbnail =
+        canRenderImages &&
+        profile.pokemon.alternateImageUrl &&
+        profile.pokemon.alternateImageUrl !== profile.pokemon.imageUrl
+          ? await renderThumbnail(profile.pokemon.alternateImageUrl)
+          : null;
       if (thumbnail) stdout(thumbnail);
       stdout(formatPokemonProfile(profile));
-      if (thumbnail) stdout(thumbnail);
+      if (alternateThumbnail) {
+        stdout(formatAlternateArtworkNote(profile.pokemon));
+        stdout(alternateThumbnail);
+      }
+      if (shinyThumbnail) {
+        stdout(formatShinyArtworkNote(profile.pokemon));
+        stdout(shinyThumbnail);
+      }
       return 0;
     }
 

@@ -15,6 +15,17 @@ test("builds a concise profile with evolution, regional Pokédexes, and version-
         types: [{ type: { name: "electric" } }],
         abilities: [{ ability: { name: "static" }, is_hidden: false }],
         species: { url: "species" },
+        sprites: {
+          other: {
+            "official-artwork": {
+              front_default: "https://example.test/pikachu.png",
+              front_shiny: "https://example.test/pikachu-shiny.png",
+            },
+            showdown: {
+              front_default: "https://example.test/pikachu-battle.gif",
+            },
+          },
+        },
         moves: [
           {
             move: { name: "thunder-shock" },
@@ -105,7 +116,13 @@ test("builds a concise profile with evolution, regional Pokédexes, and version-
   };
   const profile = await buildPokemonProfile(client, "pikachu");
   expect(profile.pokemon).toEqual(
-    expect.objectContaining({ name: "pikachu", heightMetres: 0.4 }),
+    expect.objectContaining({
+      name: "pikachu",
+      heightMetres: 0.4,
+      shinyImageUrl: "https://example.test/pikachu-shiny.png",
+      alternateImageUrl: "https://example.test/pikachu-battle.gif",
+      alternateImageSource: "Pokémon Showdown battle sprite",
+    }),
   );
   expect(Object.keys(profile)[0]).toBe("pokedexDescription");
   expect(profile.pokedexDescription).toEqual([

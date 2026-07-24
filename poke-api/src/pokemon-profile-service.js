@@ -74,6 +74,19 @@ function cleanPokedexWording(wording) {
     .trim();
 }
 
+function alternateArtwork(sprites = {}) {
+  const sources = [
+    ["Pokémon Showdown battle sprite", sprites.other?.showdown?.front_default],
+    ["Default game sprite", sprites.front_default],
+    ["Back-view game sprite", sprites.back_default],
+  ];
+  const [source, url] = sources.find(([, candidate]) => candidate) || [
+    "Game sprite unavailable",
+    null,
+  ];
+  return { source, url };
+}
+
 async function latestPokedexDescriptions(client, flavorTextEntries = []) {
   const englishEntries = flavorTextEntries.filter(
     ({ language }) => language.name === "en",
@@ -147,6 +160,7 @@ async function buildPokemonProfile(client, nameOrId) {
       }, new Map())
       .values(),
   ];
+  const alternate = alternateArtwork(pokemon.sprites);
 
   return {
     pokedexDescription,
@@ -164,6 +178,12 @@ async function buildPokemonProfile(client, nameOrId) {
         pokemon.sprites?.other?.["official-artwork"]?.front_default ||
         pokemon.sprites?.front_default ||
         null,
+      shinyImageUrl:
+        pokemon.sprites?.other?.["official-artwork"]?.front_shiny ||
+        pokemon.sprites?.front_shiny ||
+        null,
+      alternateImageUrl: alternate.url,
+      alternateImageSource: alternate.source,
       legendary: species.is_legendary,
       mythical: species.is_mythical,
     },

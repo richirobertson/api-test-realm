@@ -34,6 +34,10 @@ describe("PokéAPI terminal CLI", () => {
             other: {
               "official-artwork": {
                 front_default: "https://example.test/pikachu.png",
+                front_shiny: "https://example.test/pikachu-shiny.png",
+              },
+              showdown: {
+                front_default: "https://example.test/pikachu-battle.gif",
               },
             },
           },
@@ -67,9 +71,18 @@ describe("PokéAPI terminal CLI", () => {
       expect.stringContaining("#0025  PIKACHU"),
     );
     expect(stdout).toHaveBeenCalledWith(expect.stringContaining("EVOLUTION"));
-    expect(renderThumbnail).toHaveBeenCalledTimes(1);
-    expect(renderThumbnail).toHaveBeenCalledWith(
+    expect(renderThumbnail).toHaveBeenCalledTimes(3);
+    expect(renderThumbnail).toHaveBeenNthCalledWith(
+      1,
       "https://example.test/pikachu.png",
+    );
+    expect(renderThumbnail).toHaveBeenNthCalledWith(
+      2,
+      "https://example.test/pikachu-shiny.png",
+    );
+    expect(renderThumbnail).toHaveBeenNthCalledWith(
+      3,
+      "https://example.test/pikachu-battle.gif",
     );
     const plainOutputs = stdout.mock.calls.map(([output]) =>
       stripVTControlCharacters(output),
@@ -77,6 +90,9 @@ describe("PokéAPI terminal CLI", () => {
     expect(plainOutputs).toEqual([
       "rendered-pokemon-image",
       expect.stringContaining("Type           electric"),
+      expect.stringContaining("Pokémon Showdown battle sprite"),
+      "rendered-pokemon-image",
+      expect.stringContaining("✦ SHINY FORM"),
       "rendered-pokemon-image",
     ]);
   });
@@ -99,5 +115,49 @@ describe("PokéAPI terminal CLI", () => {
     expect(stderr).toHaveBeenCalledWith(
       expect.stringContaining('Pokémon "missingno" was not found'),
     );
+  });
+
+  it("repeats the standard image when shiny artwork is unavailable", async () => {
+    renderThumbnail.mockClear();
+    const stdout = jest.fn();
+    const client = {
+      getPokemon: jest.fn().mockResolvedValue(
+        jsonResponse({
+          id: 25,
+          name: "pikachu",
+          height: 4,
+          weight: 60,
+          types: [],
+          abilities: [],
+          moves: [],
+          species: { url: "species" },
+          sprites: { front_default: "https://example.test/pikachu.png" },
+        }),
+      ),
+      getByUrl: jest.fn((url) =>
+        Promise.resolve(
+          jsonResponse(
+            url === "species"
+              ? {
+                  is_legendary: false,
+                  is_mythical: false,
+                  evolution_chain: { url: "chain" },
+                  pokedex_numbers: [],
+                }
+              : { chain: { species: { name: "pikachu" }, evolves_to: [] } },
+          ),
+        ),
+      ),
+    };
+
+    await run(["pikachu"], { client, stdout, stderr: jest.fn() });
+
+    expect(renderThumbnail).toHaveBeenCalledTimes(1);
+    expect(stdout.mock.calls.map(([output]) => output)).toEqual([
+      "rendered-pokemon-image",
+      expect.stringContaining("PIKACHU"),
+      expect.stringContaining("✦ SHINY FORM"),
+      "rendered-pokemon-image",
+    ]);
   });
 });
