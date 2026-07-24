@@ -36,15 +36,17 @@ It uses Node 24, installs with `npm ci`, and runs `npm run test:mocked`. It has 
 
 ```sh
 poke pikachu
+poke mr mime galar
 poke pikachu galar
 poke charizard flamethrower
+poke dragonite dragon rage
 poke electric kanto
 poke flamethrower johto
 ```
 
-`poke <pokemon>` returns a curated profile rather than the full upstream payload: key facts, regional Pokédex coverage, evolution conditions, and level-up moves. Two search terms resolve a type or move and a region, then return matching Pokémon with useful encounter, learning, and version details. Multi-word moves work naturally; the final word is treated as the region.
+`poke <pokemon>` returns a curated profile rather than the full upstream payload: key facts, regional Pokédex coverage, evolution conditions, and level-up moves. Pokémon names, regional variants, and moves can contain multiple words: `poke mr mime galar` resolves the Galarian form of Mr. Mime, while `poke dragonite dragon rage` checks how Dragonite learns Dragon Rage. Type or move searches combined with a region return matching Pokémon with useful encounter, learning, and version details.
 
-Output is indented, syntax-coloured JSON. With [Chafa](https://hpjansson.org/chafa/) installed, direct lookups and up to ten list results show local ANSI/Unicode artwork above the JSON.
+Output uses structured, colour-enhanced terminal cards. With [Chafa](https://hpjansson.org/chafa/) installed, direct lookups and up to ten list results also show local ANSI/Unicode artwork.
 
 ### Zsh completion
 

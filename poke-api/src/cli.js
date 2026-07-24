@@ -27,11 +27,31 @@ const usage = `Usage:
   npm run poke -- {{type-or-move}} {{region}}
 
 Examples:
-  npm run poke -- pikachu
-  npm run poke -- pikachu galar
-  npm run poke -- charizard flamethrower
-  npm run poke -- electric kanto
-  npm run poke -- flamethrower johto`;
+  poke pikachu
+  poke mr mime
+  poke mr mime galar
+  poke pikachu galar
+  poke dragonite dragon rage
+  poke electric kanto
+  poke flamethrower johto`;
+
+function identifier(terms) {
+  return terms.join("-").trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function invalidCombination(terms) {
+  return `Could not understand "poke ${terms.join(" ")}".
+Pokémon names and moves may contain multiple words, but the Pokémon must come first when combining it with a move or region.
+
+Valid examples:
+  poke pikachu
+  poke mr mime
+  poke mr mime galar
+  poke charizard flamethrower
+  poke dragonite dragon rage
+  poke pikachu kanto
+  poke electric kanto`;
+}
 
 async function loadNextPage() {
   if (!process.stdin.isTTY) return false;
@@ -59,8 +79,11 @@ async function run(
   }
 
   try {
-    if (terms.length === 1) {
-      const profile = await buildPokemonProfile(apiClient, terms[0]);
+    const fullName = identifier(terms);
+    const fullPokemonResponse =
+      terms.length > 1 ? await apiClient.getPokemon(fullName) : null;
+    if (terms.length === 1 || fullPokemonResponse.ok) {
+      const profile = await buildPokemonProfile(apiClient, fullName);
       const thumbnail =
         canRenderImages && profile.pokemon.imageUrl
           ? await renderThumbnail(profile.pokemon.imageUrl)
@@ -88,39 +111,44 @@ async function run(
       return 0;
     }
 
-    if (terms.length === 2) {
-      const pokemonResponse = await apiClient.getPokemon(terms[0]);
+    for (let split = terms.length - 1; split > 0; split -= 1) {
+      const pokemonName = identifier(terms.slice(0, split));
+      const qualifier = identifier(terms.slice(split));
+      const pokemonResponse = await apiClient.getPokemon(pokemonName);
       if (pokemonResponse.ok) {
-        const regionResponse = await apiClient.getRegion(terms[1]);
+        const regionResponse = await apiClient.getRegion(qualifier);
         if (regionResponse.ok) {
           const profile = await buildPokemonRegionProfile(
             apiClient,
-            terms[0],
-            terms[1],
+            pokemonName,
+            qualifier,
           );
           if (canRenderImages && profile.imageUrl)
             stdout(await renderThumbnail(profile.imageUrl));
           stdout(formatRegionProfile(profile));
           return 0;
         }
-        const moveResponse = await apiClient.getMove(terms[1]);
+        const moveResponse = await apiClient.getMove(qualifier);
         if (moveResponse.ok) {
           const profile = await buildPokemonMoveProfile(
             apiClient,
-            terms[0],
-            terms[1],
+            pokemonName,
+            qualifier,
           );
           if (canRenderImages && profile.imageUrl)
             stdout(await renderThumbnail(profile.imageUrl));
           stdout(formatMoveProfile(profile));
           return 0;
         }
+        throw new Error(invalidCombination(terms));
       }
     }
 
     // The final term is the region; preceding words form a hyphenated PokéAPI type or move name.
-    const region = terms.at(-1);
-    const criterion = terms.slice(0, -1).join("-");
+    const region = identifier(terms.slice(-1));
+    const criterion = identifier(terms.slice(0, -1));
+    const regionResponse = await apiClient.getRegion(region);
+    if (!regionResponse.ok) throw new Error(invalidCombination(terms));
     const result = await findPokemonByCriterionAndRegion(
       apiClient,
       criterion,

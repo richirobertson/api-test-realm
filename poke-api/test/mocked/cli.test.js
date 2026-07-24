@@ -160,4 +160,130 @@ describe("PokéAPI terminal CLI", () => {
       "rendered-pokemon-image",
     ]);
   });
+
+  it("resolves multi-word Pokémon names and moves", async () => {
+    renderThumbnail.mockClear();
+    const moveClient = {
+      getPokemon: jest.fn((name) =>
+        Promise.resolve(
+          name === "dragonite"
+            ? jsonResponse({
+                name: "dragonite",
+                moves: [
+                  {
+                    move: { name: "dragon-rage" },
+                    version_group_details: [
+                      {
+                        move_learn_method: { name: "level-up" },
+                        level_learned_at: 15,
+                        version_group: { name: "red-blue" },
+                      },
+                    ],
+                  },
+                ],
+                sprites: {},
+              })
+            : new Response("", { status: 404 }),
+        ),
+      ),
+      getRegion: jest.fn().mockResolvedValue(new Response("", { status: 404 })),
+      getMove: jest.fn((name) =>
+        Promise.resolve(
+          name === "dragon-rage"
+            ? jsonResponse({ name })
+            : new Response("", { status: 404 }),
+        ),
+      ),
+    };
+    const stdout = jest.fn();
+
+    await expect(
+      run(["dragonite", "dragon", "rage"], {
+        client: moveClient,
+        stdout,
+        stderr: jest.fn(),
+      }),
+    ).resolves.toBe(0);
+
+    expect(moveClient.getPokemon).toHaveBeenCalledWith("dragonite");
+    expect(moveClient.getMove).toHaveBeenCalledWith("dragon-rage");
+    expect(stdout).toHaveBeenCalledWith(
+      expect.stringContaining("DRAGONITE  •  DRAGON RAGE"),
+    );
+
+    const nameClient = {
+      getPokemon: jest.fn((name) =>
+        Promise.resolve(
+          name === "mr-mime"
+            ? jsonResponse({
+                id: 122,
+                name: "mr-mime",
+                height: 13,
+                weight: 545,
+                types: [],
+                abilities: [],
+                moves: [],
+                species: { url: "species" },
+                sprites: {},
+              })
+            : new Response("", { status: 404 }),
+        ),
+      ),
+      getByUrl: jest.fn((url) =>
+        Promise.resolve(
+          jsonResponse(
+            url === "species"
+              ? {
+                  is_legendary: false,
+                  is_mythical: false,
+                  evolution_chain: { url: "chain" },
+                  pokedex_numbers: [],
+                }
+              : { chain: { species: { name: "mr-mime" }, evolves_to: [] } },
+          ),
+        ),
+      ),
+    };
+
+    await expect(
+      run(["mr", "mime"], {
+        client: nameClient,
+        stdout,
+        stderr: jest.fn(),
+      }),
+    ).resolves.toBe(0);
+    expect(nameClient.getPokemon).toHaveBeenCalledWith("mr-mime");
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining("MR MIME"));
+  });
+
+  it("explains invalid or reversed combinations with valid examples", async () => {
+    const stderr = jest.fn();
+    const client = {
+      getPokemon: jest
+        .fn()
+        .mockResolvedValue(new Response("", { status: 404 })),
+      getRegion: jest.fn().mockResolvedValue(new Response("", { status: 404 })),
+    };
+
+    await expect(
+      run(["flamethrower", "charizard"], {
+        client,
+        stdout: jest.fn(),
+        stderr,
+      }),
+    ).resolves.toBe(1);
+
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining("the Pokémon must come first"),
+    );
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining("poke charizard flamethrower"),
+    );
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining("poke dragonite dragon rage"),
+    );
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining("poke mr mime galar"),
+    );
+  });
 });
