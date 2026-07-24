@@ -8,7 +8,15 @@ const {
   buildPokemonRegionProfile,
   buildPokemonMoveProfile,
 } = require("./pokemon-profile-service");
-const { formatJson } = require("./formatters");
+const {
+  formatError,
+  formatMoreResults,
+  formatMoveProfile,
+  formatPokemonProfile,
+  formatRegionProfile,
+  formatSearchResult,
+  formatSearchSummary,
+} = require("./formatters");
 const { renderThumbnail, isChafaAvailable } = require("./image-renderer");
 
 const usage = `Usage:
@@ -56,7 +64,7 @@ async function run(
           ? await renderThumbnail(profile.pokemon.imageUrl)
           : null;
       if (thumbnail) stdout(thumbnail);
-      stdout(formatJson(profile));
+      stdout(formatPokemonProfile(profile));
       if (thumbnail) stdout(thumbnail);
       return 0;
     }
@@ -73,7 +81,7 @@ async function run(
           );
           if (canRenderImages && profile.imageUrl)
             stdout(await renderThumbnail(profile.imageUrl));
-          stdout(formatJson(profile));
+          stdout(formatRegionProfile(profile));
           return 0;
         }
         const moveResponse = await apiClient.getMove(terms[1]);
@@ -85,7 +93,7 @@ async function run(
           );
           if (canRenderImages && profile.imageUrl)
             stdout(await renderThumbnail(profile.imageUrl));
-          stdout(formatJson(profile));
+          stdout(formatMoveProfile(profile));
           return 0;
         }
       }
@@ -100,7 +108,7 @@ async function run(
       region,
     );
     stdout(
-      formatJson({
+      formatSearchSummary({
         kind: result.kind,
         name: result.name,
         region: result.region,
@@ -112,20 +120,16 @@ async function run(
       for (const pokemon of page) {
         if (canRenderImages && pokemon.imageUrl)
           stdout(await renderThumbnail(pokemon.imageUrl));
-        stdout(formatJson(pokemon));
+        stdout(formatSearchResult(pokemon));
       }
       if (offset + 10 < result.results.length && !(await loadNextPage())) {
-        stdout(
-          formatJson({
-            additionalResults: result.results.length - offset - 10,
-          }),
-        );
+        stdout(formatMoreResults(result.results.length - offset - 10));
         break;
       }
     }
     return 0;
   } catch (error) {
-    stderr(formatJson({ error: error.message }));
+    stderr(formatError(error.message));
     return 1;
   }
 }

@@ -1,55 +1,85 @@
 const {
-  colorizeJson,
-  formatJson,
-  markHighlightedValues,
+  formatError,
+  formatMoveProfile,
+  formatPokemonProfile,
+  formatSearchResult,
+  formatSearchSummary,
 } = require("../../src/formatters");
 
-describe("JSON formatter", () => {
-  it("marks name, game, region, version-group, and version values for semantic highlighting", () => {
-    expect(
-      markHighlightedValues({
-        game: "violet",
-        region: "kanto",
-        name: "pikachu",
-        versionGroups: ["red-blue", "gold-silver"],
-        versions: ["red", "blue"],
-      }),
-    ).toEqual({
-      game: "\uE000violet\uE000",
-      region: "\uE000kanto\uE000",
-      name: "\uE001pikachu\uE001",
-      versionGroups: ["\uE000red-blue\uE000", "\uE000gold-silver\uE000"],
-      versions: ["\uE000red\uE000", "\uE000blue\uE000"],
-    });
-  });
-
-  it("keeps Pokémon names distinct from region, version-group, and version colours", () => {
-    const json = JSON.stringify(
-      markHighlightedValues({
-        name: "pikachu",
-        region: "kanto",
-        versionGroups: ["red-blue", "gold-silver"],
-        versions: ["red", "blue"],
-      }),
-      null,
-      2,
+describe("Pokémon terminal formatter", () => {
+  it("renders a structured profile with readable domain sections", () => {
+    const output = formatPokemonProfile(
+      {
+        pokemon: {
+          id: 25,
+          name: "pikachu",
+          types: ["electric"],
+          heightMetres: 0.4,
+          weightKilograms: 6,
+          abilities: [{ name: "static", hidden: false }],
+        },
+        pokedexDescription: [{ game: "yellow", wording: "A famous mouse." }],
+        regionalCoverage: [
+          {
+            region: "kanto",
+            pokedexes: [{ name: "kanto", entryNumber: 25 }],
+          },
+        ],
+        evolutionLine: { species: "pichu", evolvesTo: [] },
+        levelUpMoves: {
+          total: 1,
+          shown: [
+            { move: "thunder-shock", level: 1, versionGroups: ["red-blue"] },
+          ],
+        },
+      },
+      false,
     );
-    const output = colorizeJson(json, true);
-    const colours = output
-      .split("\u001B[38;2;")
-      .slice(1)
-      .map((segment) => segment.split("m")[0]);
 
-    expect(colours).toHaveLength(5);
-    expect(new Set(colours).size).toBe(5);
-    expect(output).toContain('\u001B[1;38;2;255;145;0m"pikachu"');
-    expect(output).not.toContain("\uE000");
-    expect(output).not.toContain("\uE001");
+    expect(output).toContain("#0025  PIKACHU");
+    expect(output).toContain("Type           electric");
+    expect(output).toContain("REGIONAL POKÉDEX");
+    expect(output).toContain("EVOLUTION");
+    expect(output).toContain("LEVEL-UP MOVES (1)");
+    expect(output).not.toContain('"pokemon"');
   });
 
-  it("keeps non-interactive output valid JSON when colours are unavailable", () => {
-    expect(JSON.parse(formatJson({ region: "kanto" }, false))).toEqual({
-      region: "kanto",
-    });
+  it("renders move and search details without exposing JSON", () => {
+    expect(
+      formatMoveProfile(
+        {
+          pokemon: "charizard",
+          move: "flamethrower",
+          learning: [
+            { method: "level-up", level: 46, versionGroup: "red-blue" },
+          ],
+        },
+        false,
+      ),
+    ).toContain("level up at level 46");
+    expect(
+      formatSearchSummary(
+        { region: "kanto", name: "electric", kind: "type", resultCount: 3 },
+        false,
+      ),
+    ).toContain("3 Pokémon match this type.");
+    expect(
+      formatSearchResult(
+        {
+          name: "pikachu",
+          entryNumber: 25,
+          encounters: [
+            { area: "kanto-forest", methods: ["walk"], versions: ["yellow"] },
+          ],
+        },
+        false,
+      ),
+    ).toContain("#025  PIKACHU");
+  });
+
+  it("renders a concise labelled error", () => {
+    expect(formatError("Not found.", false)).toBe(
+      "✖ Pokémon lookup failed\n  Not found.",
+    );
   });
 });

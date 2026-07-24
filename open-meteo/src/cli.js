@@ -5,7 +5,7 @@ const {
   requestTimeoutMs,
 } = require("./config");
 const { createOpenMeteoClient } = require("./open-meteo-client");
-const { formatJson } = require("./formatters");
+const { formatError, formatWeather } = require("./formatters");
 const { getWeatherByPlace } = require("./weather-service");
 const {
   isChafaAvailable,
@@ -47,10 +47,10 @@ async function run(
     const weather = await getWeatherByPlace(apiClient, argumentsList.join(" "));
     if (canRenderWeatherSymbol())
       stdout(renderSymbol(weather.current.weatherCode));
-    stdout(formatJson(weather));
+    stdout(formatWeather(weather));
     return 0;
   } catch (error) {
-    stderr(formatJson({ error: error.message }));
+    stderr(formatError(error.message));
     return 1;
   }
 }
