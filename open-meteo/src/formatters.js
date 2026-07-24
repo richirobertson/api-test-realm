@@ -1,67 +1,97 @@
 const pc = require("picocolors");
 
-const contextualMarker = "\uE000";
-const locationMarker = "\uE001";
-
-function markWeatherValues(value, key) {
-  if (Array.isArray(value))
-    return value.map((item) => markWeatherValues(item, key));
-  if (value && typeof value === "object")
-    return Object.fromEntries(
-      Object.entries(value).map(([childKey, childValue]) => [
-        childKey,
-        markWeatherValues(childValue, childKey),
-      ]),
-    );
-  if (typeof value === "string" && key === "name")
-    return `${locationMarker}${value}${locationMarker}`;
-  if (
-    typeof value === "string" &&
-    ["country", "timezone", "conditions"].includes(key)
-  )
-    return `${contextualMarker}${value}${contextualMarker}`;
-  return value;
+function paint(enabled, color, value) {
+  return enabled ? color(String(value)) : String(value);
 }
 
-function contextualColor(text, index, colorsEnabled) {
-  if (!colorsEnabled) return text;
-  const hue = (index * 137.508 + 210) % 360;
-  const red = Math.round(128 + 100 * Math.sin((hue * Math.PI) / 180));
-  const green = Math.round(128 + 100 * Math.sin(((hue + 120) * Math.PI) / 180));
-  const blue = Math.round(128 + 100 * Math.sin(((hue + 240) * Math.PI) / 180));
-  return `\u001B[38;2;${red};${green};${blue}m${text}\u001B[39m`;
+function present(value, suffix = "") {
+  return value === undefined || value === null || value === ""
+    ? "—"
+    : `${value}${suffix}`;
 }
 
-function colorizeJson(json, colorsEnabled = pc.isColorSupported) {
-  const contextualValues = new Map();
+function formatWeather(weather, colorsEnabled = pc.isColorSupported) {
+  const {
+    location = {},
+    units = {},
+    current = {},
+    dailyForecast = [],
+  } = weather;
+  const temperatureUnit = units.temperature || "°C";
+  const windUnit = units.windSpeed || "km/h";
+  const precipitationUnit = units.precipitation || "mm";
+  const place = [location.name, location.administrativeArea, location.country]
+    .filter(Boolean)
+    .join(", ");
+  const title = paint(colorsEnabled, pc.bold, `☀  ${place || "Weather"}`);
+  const rule = paint(colorsEnabled, pc.dim, "─".repeat(58));
+  const condition = paint(
+    colorsEnabled,
+    pc.bold,
+    current.conditions && !current.conditions.includes("undefined")
+      ? current.conditions
+      : "Conditions unavailable",
+  );
+  const temperature = paint(
+    colorsEnabled,
+    pc.cyan,
+    present(current.temperature, temperatureUnit),
+  );
 
-  return json.replace(/"(?:\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"/g, (match) => {
-    if (match.includes(locationMarker)) {
-      const cleanValue = match.replaceAll(locationMarker, "");
-      return colorsEnabled
-        ? `\u001B[1;38;2;255;145;0m${cleanValue}\u001B[39m`
-        : cleanValue;
-    }
-    if (match.includes(contextualMarker)) {
-      const cleanValue = match.replaceAll(contextualMarker, "");
-      const value = JSON.parse(cleanValue);
-      if (!contextualValues.has(value))
-        contextualValues.set(value, contextualValues.size);
-      return contextualColor(
-        cleanValue,
-        contextualValues.get(value),
-        colorsEnabled,
+  const lines = [
+    "",
+    title,
+    rule,
+    `  ${condition}   ${temperature}`,
+    `  Feels like ${present(current.apparentTemperature, temperatureUnit)}  •  Wind ${present(current.windSpeed, ` ${windUnit}`)}`,
+    `  Observed ${present(current.observedAt)}  •  ${present(location.timezone)}`,
+    "",
+    paint(colorsEnabled, pc.bold, "  3-day forecast"),
+  ];
+
+  if (!dailyForecast.length) {
+    lines.push(paint(colorsEnabled, pc.dim, "  Forecast unavailable"));
+  } else {
+    for (const day of dailyForecast) {
+      lines.push(
+        `  ${present(day.date).padEnd(12)} ${present(day.conditions).padEnd(25)} ${paint(
+          colorsEnabled,
+          pc.red,
+          present(day.highTemperature, temperatureUnit),
+        ).padEnd(colorsEnabled ? 18 : 8)} ${paint(
+          colorsEnabled,
+          pc.blue,
+          present(day.lowTemperature, temperatureUnit),
+        ).padEnd(colorsEnabled ? 18 : 8)} ${present(
+          day.precipitation,
+          ` ${precipitationUnit}`,
+        )}`,
       );
     }
-    return match;
-  });
+  }
+
+  if (location.coordinates) {
+    lines.push(
+      "",
+      paint(
+        colorsEnabled,
+        pc.dim,
+        `  ${present(location.coordinates.latitude)}, ${present(
+          location.coordinates.longitude,
+        )}${location.elevationMetres != null ? `  •  ${location.elevationMetres} m elevation` : ""}`,
+      ),
+    );
+  }
+  lines.push(rule, "");
+  return lines.join("\n");
 }
 
-function formatJson(value, colorsEnabled = pc.isColorSupported) {
-  return colorizeJson(
-    JSON.stringify(markWeatherValues(value), null, 2),
+function formatError(message, colorsEnabled = pc.isColorSupported) {
+  return `${paint(colorsEnabled, pc.red, "✖")} ${paint(
     colorsEnabled,
-  );
+    pc.bold,
+    "Weather unavailable",
+  )}\n  ${message}`;
 }
 
-module.exports = { colorizeJson, formatJson, markWeatherValues };
+module.exports = { formatError, formatWeather };

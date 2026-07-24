@@ -41,10 +41,12 @@ test("weather CLI joins a multi-word place and prints its curated profile", asyn
   ).resolves.toBe(0);
 
   expect(client.searchPlaces).toHaveBeenCalledWith("New York");
-  expect(stdout).toHaveBeenCalledWith(expect.stringContaining('"timezone"'));
+  expect(stdout).toHaveBeenCalledWith(
+    expect.stringContaining("America/New_York"),
+  );
 });
 
-test("weather CLI renders the matching local weather symbol above its JSON", async () => {
+test("weather CLI renders the matching local weather symbol above its formatted card", async () => {
   const stdout = jest.fn();
   const renderSymbol = jest.fn().mockReturnValue("weather-symbol");
   const client = {
@@ -80,7 +82,7 @@ test("weather CLI renders the matching local weather symbol above its JSON", asy
 
   expect(renderSymbol).toHaveBeenCalledWith(95);
   expect(stdout).toHaveBeenNthCalledWith(1, "weather-symbol");
-  expect(stdout.mock.calls[1][0]).toContain('"conditions":');
+  expect(stdout.mock.calls[1][0]).toContain("3-day forecast");
   expect(stdout.mock.calls[1][0]).toContain("Thunderstorm");
 });
 

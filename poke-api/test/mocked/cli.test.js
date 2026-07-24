@@ -14,7 +14,7 @@ function jsonResponse(body, status = 200) {
 }
 
 describe("PokéAPI terminal CLI", () => {
-  it("prints beautified JSON for a direct lookup", async () => {
+  it("prints a structured profile for a direct lookup", async () => {
     const stdout = jest.fn();
     const client = {
       getPokemon: jest.fn().mockResolvedValue(
@@ -62,18 +62,16 @@ describe("PokéAPI terminal CLI", () => {
 
     expect(exitCode).toBe(0);
     expect(stdout).toHaveBeenCalledWith(
-      expect.stringContaining('"regionalCoverage"'),
+      expect.stringContaining("#0025  PIKACHU"),
     );
-    expect(stdout).toHaveBeenCalledWith(
-      expect.stringContaining('"evolutionLine"'),
-    );
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining("EVOLUTION"));
     expect(renderThumbnail).toHaveBeenCalledTimes(1);
     expect(renderThumbnail).toHaveBeenCalledWith(
       "https://example.test/pikachu.png",
     );
     expect(stdout.mock.calls.map(([output]) => output)).toEqual([
       "rendered-pokemon-image",
-      expect.stringContaining('"pokemon"'),
+      expect.stringContaining("Type           electric"),
       "rendered-pokemon-image",
     ]);
   });
@@ -93,9 +91,8 @@ describe("PokéAPI terminal CLI", () => {
     });
 
     expect(exitCode).toBe(1);
-    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('"error"'));
     expect(stderr).toHaveBeenCalledWith(
-      expect.stringContaining('Pokémon \\"missingno\\" was not found'),
+      expect.stringContaining('Pokémon "missingno" was not found'),
     );
   });
 });
