@@ -19,7 +19,10 @@ function markHighlightedValues(value, key) {
 
   if (
     typeof value === "string" &&
-    (key === "region" || key === "versionGroups" || key === "versions")
+    (key === "game" ||
+      key === "region" ||
+      key === "versionGroups" ||
+      key === "versions")
   ) {
     return `${highlightedValueMarker}${value}${highlightedValueMarker}`;
   }

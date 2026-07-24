@@ -5,15 +5,17 @@ const {
 } = require("../../src/formatters");
 
 describe("JSON formatter", () => {
-  it("marks name, region, version-group, and version values for semantic highlighting", () => {
+  it("marks name, game, region, version-group, and version values for semantic highlighting", () => {
     expect(
       markHighlightedValues({
+        game: "violet",
         region: "kanto",
         name: "pikachu",
         versionGroups: ["red-blue", "gold-silver"],
         versions: ["red", "blue"],
       }),
     ).toEqual({
+      game: "\uE000violet\uE000",
       region: "\uE000kanto\uE000",
       name: "\uE001pikachu\uE001",
       versionGroups: ["\uE000red-blue\uE000", "\uE000gold-silver\uE000"],
