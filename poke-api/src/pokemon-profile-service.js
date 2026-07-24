@@ -62,6 +62,47 @@ function levelUpMoves(moves, maximum = 20) {
   };
 }
 
+function resourceId(url) {
+  const match = url?.match(/\/(\d+)\/?$/);
+  return match ? Number(match[1]) : -1;
+}
+
+function cleanPokedexWording(wording) {
+  return wording
+    .replace(/[\n\f]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function latestPokedexDescriptions(client, flavorTextEntries = []) {
+  const englishEntries = flavorTextEntries.filter(
+    ({ language }) => language.name === "en",
+  );
+  if (!englishEntries.length) return [];
+
+  const newestEntry = englishEntries.reduce((newest, entry) =>
+    resourceId(entry.version.url) > resourceId(newest.version.url)
+      ? entry
+      : newest,
+  );
+  const version = await readJson(
+    await client.getByUrl(newestEntry.version.url),
+    "Pokémon game version",
+  );
+  const versionGroup = await readJson(
+    await client.getByUrl(version.version_group.url),
+    "Pokémon game version group",
+  );
+  const newestGames = new Set(versionGroup.versions.map(({ name }) => name));
+
+  return englishEntries
+    .filter(({ version: entryVersion }) => newestGames.has(entryVersion.name))
+    .map(({ flavor_text: wording, version: entryVersion }) => ({
+      game: entryVersion.name,
+      wording: cleanPokedexWording(wording),
+    }));
+}
+
 async function buildPokemonProfile(client, nameOrId) {
   const pokemon = await readJson(
     await client.getPokemon(nameOrId),
@@ -71,7 +112,8 @@ async function buildPokemonProfile(client, nameOrId) {
     await client.getByUrl(pokemon.species.url),
     "Pokémon species",
   );
-  const [evolutionChain, pokedexes] = await Promise.all([
+  const [pokedexDescription, evolutionChain, pokedexes] = await Promise.all([
+    latestPokedexDescriptions(client, species.flavor_text_entries),
     readJson(
       await client.getByUrl(species.evolution_chain.url),
       "Evolution chain",
@@ -107,6 +149,7 @@ async function buildPokemonProfile(client, nameOrId) {
   ];
 
   return {
+    pokedexDescription,
     pokemon: {
       id: pokemon.id,
       name: pokemon.name,
@@ -195,6 +238,7 @@ module.exports = {
   buildPokemonProfile,
   buildPokemonRegionProfile,
   buildPokemonMoveProfile,
+  latestPokedexDescriptions,
   levelUpMoves,
   summariseEvolution,
 };

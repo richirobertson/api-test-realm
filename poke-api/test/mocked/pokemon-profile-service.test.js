@@ -40,6 +40,33 @@ test("builds a concise profile with evolution, regional Pokédexes, and version-
           response({
             is_legendary: false,
             is_mythical: false,
+            flavor_text_entries: [
+              {
+                flavor_text: "It has a very old description.",
+                language: { name: "en" },
+                version: {
+                  name: "sword",
+                  url: "https://pokeapi.co/api/v2/version/29/",
+                },
+              },
+              {
+                flavor_text:
+                  "When its electricity builds, its muscles are stimulated.",
+                language: { name: "en" },
+                version: {
+                  name: "scarlet",
+                  url: "https://pokeapi.co/api/v2/version/40/",
+                },
+              },
+              {
+                flavor_text: "It can discharge electricity from its cheeks.",
+                language: { name: "en" },
+                version: {
+                  name: "violet",
+                  url: "https://pokeapi.co/api/v2/version/41/",
+                },
+              },
+            ],
             evolution_chain: { url: "chain" },
             pokedex_numbers: [
               { entry_number: 25, pokedex: { name: "kanto", url: "dex" } },
@@ -63,6 +90,16 @@ test("builds a concise profile with evolution, regional Pokédexes, and version-
             },
           }),
         );
+      if (url === "https://pokeapi.co/api/v2/version/41/")
+        return Promise.resolve(
+          response({ version_group: { url: "scarlet-violet-group" } }),
+        );
+      if (url === "scarlet-violet-group")
+        return Promise.resolve(
+          response({
+            versions: [{ name: "scarlet" }, { name: "violet" }],
+          }),
+        );
       return Promise.resolve(response({ region: { name: "kanto" } }));
     }),
   };
@@ -70,6 +107,17 @@ test("builds a concise profile with evolution, regional Pokédexes, and version-
   expect(profile.pokemon).toEqual(
     expect.objectContaining({ name: "pikachu", heightMetres: 0.4 }),
   );
+  expect(Object.keys(profile)[0]).toBe("pokedexDescription");
+  expect(profile.pokedexDescription).toEqual([
+    {
+      game: "scarlet",
+      wording: "When its electricity builds, its muscles are stimulated.",
+    },
+    {
+      game: "violet",
+      wording: "It can discharge electricity from its cheeks.",
+    },
+  ]);
   expect(profile.regionalCoverage).toEqual([
     { region: "kanto", pokedexes: [{ name: "kanto", entryNumber: 25 }] },
   ]);
