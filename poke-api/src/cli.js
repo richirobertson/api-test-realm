@@ -51,9 +51,13 @@ async function run(
   try {
     if (terms.length === 1) {
       const profile = await buildPokemonProfile(apiClient, terms[0]);
-      if (canRenderImages && profile.pokemon.imageUrl)
-        stdout(await renderThumbnail(profile.pokemon.imageUrl));
+      const thumbnail =
+        canRenderImages && profile.pokemon.imageUrl
+          ? await renderThumbnail(profile.pokemon.imageUrl)
+          : null;
+      if (thumbnail) stdout(thumbnail);
       stdout(formatJson(profile));
+      if (thumbnail) stdout(thumbnail);
       return 0;
     }
 

@@ -1,4 +1,10 @@
+jest.mock("../../src/image-renderer", () => ({
+  isChafaAvailable: jest.fn(() => true),
+  renderThumbnail: jest.fn(async () => "rendered-pokemon-image"),
+}));
+
 const { run } = require("../../src/cli");
+const { renderThumbnail } = require("../../src/image-renderer");
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -22,6 +28,13 @@ describe("PokéAPI terminal CLI", () => {
           stats: [{ stat: { name: "speed" }, base_stat: 90 }],
           species: { url: "species" },
           moves: [],
+          sprites: {
+            other: {
+              "official-artwork": {
+                front_default: "https://example.test/pikachu.png",
+              },
+            },
+          },
         }),
       ),
     };
@@ -54,6 +67,15 @@ describe("PokéAPI terminal CLI", () => {
     expect(stdout).toHaveBeenCalledWith(
       expect.stringContaining('"evolutionLine"'),
     );
+    expect(renderThumbnail).toHaveBeenCalledTimes(1);
+    expect(renderThumbnail).toHaveBeenCalledWith(
+      "https://example.test/pikachu.png",
+    );
+    expect(stdout.mock.calls.map(([output]) => output)).toEqual([
+      "rendered-pokemon-image",
+      expect.stringContaining('"pokemon"'),
+      "rendered-pokemon-image",
+    ]);
   });
 
   it("returns a friendly error when a direct Pokémon lookup is unavailable", async () => {
