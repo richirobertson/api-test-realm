@@ -37,7 +37,7 @@
     "eslint": "^10.7.0",
     "globals": "^17.7.0",
     "jest": "^30.4.2",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.10"
   },
   "allowScripts": {
     "unrs-resolver@1.12.2": true,
